@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[38,)"
+issueTrackerURL="https://github.com/Mrbysco/ThisRocksForge/issues"
+license="MIT"
+
+[[mods]]
+modId="rocks"
+version="${file.jarVersion}"
+displayName="This Rocks! (Forge)"
+logoFile="icon.png"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/this-rocks-forge"
+authors="Motschen, TeamMidnightDust"
+description='''
+Adds little rocks, sticks, pinecones, seashells and starfish to your world to make it feel more natural.
+'''
+[[dependencies.rocks]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.18,1.19)"
+ordering="NONE"
+side="BOTH"

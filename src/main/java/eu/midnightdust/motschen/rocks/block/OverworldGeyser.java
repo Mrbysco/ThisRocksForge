@@ -30,53 +30,60 @@ import java.util.Objects;
 
 public class OverworldGeyser extends BaseEntityBlock implements EntityBlock {
 
-    private static final VoxelShape SHAPE;
-    private static final VoxelShape SNOWY_SHAPE;
-    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
-    public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
+	private static final VoxelShape SHAPE;
+	private static final VoxelShape SNOWY_SHAPE;
+	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+	public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
-    public OverworldGeyser() {
-        super(Properties.copy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
-        this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false).setValue(SNOWY, false));
-    }
-    @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
-    }
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new OverworldGeyserBlockEntity(pos, state);
-    }
-    @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, RocksBlockEntities.OVERWORLD_GEYSER_BE.get(), OverworldGeyserBlockEntity::tick);
-    }
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
-        return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-                .setValue(ACTIVE, false).setValue(SNOWY, false);
-    }
+	public OverworldGeyser() {
+		super(Properties.copy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
+		this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false).setValue(SNOWY, false));
+	}
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ACTIVE,SNOWY);
-    }
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
-        if (state.getValue(SNOWY)) {return SNOWY_SHAPE;}
-        else return SHAPE;
-    }
-    static {
-        VoxelShape shape = box(5, 0, 5, 11, 1, 11);
-        VoxelShape snow_layer = box(0, 0, 0, 16, 2, 16);
-        VoxelShape shape_snow = box(5, 2, 5, 11, 3, 11);
-        VoxelShape snowy = Shapes.or(snow_layer, shape_snow);
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.MODEL;
+	}
 
-        SHAPE = shape;
-        SNOWY_SHAPE = snowy;
-    }
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new OverworldGeyserBlockEntity(pos, state);
+	}
 
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return world.getBlockState(pos.below()).isFaceSturdy(world,pos,Direction.UP);
-    }
+	@Nullable
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+		return createTickerHelper(type, RocksBlockEntities.OVERWORLD_GEYSER_BE.get(), OverworldGeyserBlockEntity::tick);
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
+		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
+				.setValue(ACTIVE, false).setValue(SNOWY, false);
+	}
+
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(ACTIVE, SNOWY);
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
+		if (state.getValue(SNOWY)) {
+			return SNOWY_SHAPE;
+		} else return SHAPE;
+	}
+
+	static {
+		VoxelShape shape = box(5, 0, 5, 11, 1, 11);
+		VoxelShape snow_layer = box(0, 0, 0, 16, 2, 16);
+		VoxelShape shape_snow = box(5, 2, 5, 11, 3, 11);
+		VoxelShape snowy = Shapes.or(snow_layer, shape_snow);
+
+		SHAPE = shape;
+		SNOWY_SHAPE = snowy;
+	}
+
+	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
+	}
 }

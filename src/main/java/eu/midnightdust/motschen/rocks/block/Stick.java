@@ -26,51 +26,54 @@ import java.util.Objects;
 
 public class Stick extends Block {
 
-    private static final VoxelShape SHAPE;
-    private static final EnumProperty<StickVariation> STICK_VARIATION = Rocks.STICK_VARIATION;
+	private static final VoxelShape SHAPE;
+	private static final EnumProperty<StickVariation> STICK_VARIATION = Rocks.STICK_VARIATION;
 
-    public Stick() {
-        super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.WOOD));
-        this.registerDefaultState(this.stateDefinition.any().setValue(STICK_VARIATION, StickVariation.SMALL));
-    }
+	public Stick() {
+		super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.WOOD));
+		this.registerDefaultState(this.stateDefinition.any().setValue(STICK_VARIATION, StickVariation.SMALL));
+	}
 
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
-        return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-                .setValue(STICK_VARIATION, StickVariation.SMALL);
-    }
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (player.isCreative()) {
-            if (state.getValue(STICK_VARIATION) == StickVariation.SMALL) {
-                world.setBlockAndUpdate(pos, state.setValue(STICK_VARIATION, StickVariation.MEDIUM));
-            }
-            if (state.getValue(STICK_VARIATION) == StickVariation.MEDIUM) {
-                world.setBlockAndUpdate(pos, state.setValue(STICK_VARIATION, StickVariation.LARGE));
-            }
-            if (state.getValue(STICK_VARIATION) == StickVariation.LARGE) {
-                world.setBlockAndUpdate(pos, state.setValue(STICK_VARIATION, StickVariation.SMALL));
-            }
-            return InteractionResult.SUCCESS;
-        }
-        else return InteractionResult.FAIL;
-    }
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
+		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
+				.setValue(STICK_VARIATION, StickVariation.SMALL);
+	}
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(STICK_VARIATION);
-    }
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
-        return SHAPE;
-    }
-    static {
-        SHAPE = box(0, 0, 0, 16, 1, 16);
-    }
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (player.isCreative()) {
+			if (state.getValue(STICK_VARIATION) == StickVariation.SMALL) {
+				world.setBlockAndUpdate(pos, state.setValue(STICK_VARIATION, StickVariation.MEDIUM));
+			}
+			if (state.getValue(STICK_VARIATION) == StickVariation.MEDIUM) {
+				world.setBlockAndUpdate(pos, state.setValue(STICK_VARIATION, StickVariation.LARGE));
+			}
+			if (state.getValue(STICK_VARIATION) == StickVariation.LARGE) {
+				world.setBlockAndUpdate(pos, state.setValue(STICK_VARIATION, StickVariation.SMALL));
+			}
+			return InteractionResult.SUCCESS;
+		} else return InteractionResult.FAIL;
+	}
 
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return world.getBlockState(pos.below()).isFaceSturdy(world,pos,Direction.UP);
-    }
-    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
-        return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
-    }
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(STICK_VARIATION);
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
+		return SHAPE;
+	}
+
+	static {
+		SHAPE = box(0, 0, 0, 16, 1, 16);
+	}
+
+	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
+	}
+
+	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
+		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
+	}
 }

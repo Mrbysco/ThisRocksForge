@@ -31,59 +31,61 @@ import java.util.Objects;
 
 public class Seashell extends Block implements SimpleWaterloggedBlock {
 
-    private static final VoxelShape SHAPE;
-    private static final EnumProperty<SeashellVariation> SEASHELL_VARIATION = Rocks.SEASHELL_VARIATION;
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	private static final VoxelShape SHAPE;
+	private static final EnumProperty<SeashellVariation> SEASHELL_VARIATION = Rocks.SEASHELL_VARIATION;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    public Seashell() {
-        super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
-        this.registerDefaultState(this.stateDefinition.any().setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, false));
-    }
+	public Seashell() {
+		super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
+		this.registerDefaultState(this.stateDefinition.any().setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, false));
+	}
 
-    @Override
-    public FluidState getFluidState(BlockState blockState_1) {
-        return blockState_1.getValue(WATERLOGGED) ? Fluids.WATER.getSource(true) : super.getFluidState(blockState_1);
-    }
+	@Override
+	public FluidState getFluidState(BlockState blockState_1) {
+		return blockState_1.getValue(WATERLOGGED) ? Fluids.WATER.getSource(true) : super.getFluidState(blockState_1);
+	}
 
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
-        FluidState fluidState = itemPlacementContext.getLevel().getFluidState(itemPlacementContext.getClickedPos());
-        return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-                .setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
-    }
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
+		FluidState fluidState = itemPlacementContext.getLevel().getFluidState(itemPlacementContext.getClickedPos());
+		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
+				.setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+	}
 
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (player.isCreative()) {
-            if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.YELLOW) {
-                world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.WHITE));
-            }
-            if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.WHITE) {
-                world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.PINK));
-            }
-            if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.PINK) {
-                world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.YELLOW));
-            }
-            return InteractionResult.SUCCESS;
-        }
-        else return InteractionResult.FAIL;
-    }
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (player.isCreative()) {
+			if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.YELLOW) {
+				world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.WHITE));
+			}
+			if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.WHITE) {
+				world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.PINK));
+			}
+			if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.PINK) {
+				world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.YELLOW));
+			}
+			return InteractionResult.SUCCESS;
+		} else return InteractionResult.FAIL;
+	}
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(SEASHELL_VARIATION, WATERLOGGED);
-    }
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
-        return SHAPE;
-    }
-    static {
-        SHAPE = box(0, 0, 0, 16, 3, 16);
-    }
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(SEASHELL_VARIATION, WATERLOGGED);
+	}
 
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return world.getBlockState(pos.below()).isFaceSturdy(world,pos,Direction.UP);
-    }
-    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
-        return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
-    }
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
+		return SHAPE;
+	}
+
+	static {
+		SHAPE = box(0, 0, 0, 16, 3, 16);
+	}
+
+	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
+	}
+
+	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
+		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
+	}
 }

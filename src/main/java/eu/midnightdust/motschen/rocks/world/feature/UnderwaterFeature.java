@@ -14,34 +14,35 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStatePr
 import java.util.Random;
 
 public class UnderwaterFeature extends Feature<ProbabilityFeatureConfiguration> {
-    WeightedStateProvider weightedBlockStateProvider1;
-    public UnderwaterFeature(Codec<ProbabilityFeatureConfiguration> codec, WeightedStateProvider weightedBlockStateProvider) {
-        super(codec);
-        weightedBlockStateProvider1 = weightedBlockStateProvider;
-    }
+	WeightedStateProvider weightedBlockStateProvider1;
 
-    @Override
-    public boolean place(FeaturePlaceContext<ProbabilityFeatureConfiguration> context) {
-        Random random = context.random();
-        WorldGenLevel structureWorldAccess = context.level();
-        BlockPos blockPos = context.origin();
-        boolean bl = false;
-        int i = random.nextInt(8) - random.nextInt(8);
-        int j = random.nextInt(8) - random.nextInt(8);
-        int k = structureWorldAccess.getHeight(Heightmap.Types.OCEAN_FLOOR, blockPos.getX() + i, blockPos.getZ() + j);
-        BlockPos blockPos2 = new BlockPos(blockPos.getX() + i, k, blockPos.getZ() + j);
+	public UnderwaterFeature(Codec<ProbabilityFeatureConfiguration> codec, WeightedStateProvider weightedBlockStateProvider) {
+		super(codec);
+		weightedBlockStateProvider1 = weightedBlockStateProvider;
+	}
 
-        if (structureWorldAccess.getBlockState(blockPos2).is(Blocks.WATER)) {
+	@Override
+	public boolean place(FeaturePlaceContext<ProbabilityFeatureConfiguration> context) {
+		Random random = context.random();
+		WorldGenLevel structureWorldAccess = context.level();
+		BlockPos blockPos = context.origin();
+		boolean bl = false;
+		int i = random.nextInt(8) - random.nextInt(8);
+		int j = random.nextInt(8) - random.nextInt(8);
+		int k = structureWorldAccess.getHeight(Heightmap.Types.OCEAN_FLOOR, blockPos.getX() + i, blockPos.getZ() + j);
+		BlockPos blockPos2 = new BlockPos(blockPos.getX() + i, k, blockPos.getZ() + j);
 
-            BlockState blockState = weightedBlockStateProvider1.getState(random,blockPos);
+		if (structureWorldAccess.getBlockState(blockPos2).is(Blocks.WATER)) {
 
-            if (blockState.canSurvive(structureWorldAccess, blockPos2)) {
-                structureWorldAccess.setBlock(blockPos2, blockState, 2);
+			BlockState blockState = weightedBlockStateProvider1.getState(random, blockPos);
 
-                bl = true;
-            }
-        }
+			if (blockState.canSurvive(structureWorldAccess, blockPos2)) {
+				structureWorldAccess.setBlock(blockPos2, blockState, 2);
 
-        return bl;
-    }
+				bl = true;
+			}
+		}
+
+		return bl;
+	}
 }

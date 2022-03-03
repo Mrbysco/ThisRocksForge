@@ -28,44 +28,50 @@ import java.util.Objects;
 
 public class NetherGeyser extends BaseEntityBlock implements EntityBlock {
 
-    private static final VoxelShape SHAPE;
-    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+	private static final VoxelShape SHAPE;
+	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
-    public NetherGeyser() {
-        super(Properties.copy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
-        this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false));
-    }
-    @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
-    }
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new NetherGeyserBlockEntity(pos, state);
-    }
-    @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, RocksBlockEntities.NETHER_GEYSER_BE.get(), NetherGeyserBlockEntity::tick);
-    }
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
-        return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-                .setValue(ACTIVE, false);
-    }
+	public NetherGeyser() {
+		super(Properties.copy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
+		this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false));
+	}
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ACTIVE);
-    }
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
-        return SHAPE;
-    }
-    static {
-        SHAPE = box(5, 0, 5, 11, 1, 11);
-    }
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.MODEL;
+	}
 
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return world.getBlockState(pos.below()).isFaceSturdy(world,pos,Direction.UP);
-    }
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new NetherGeyserBlockEntity(pos, state);
+	}
+
+	@Nullable
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+		return createTickerHelper(type, RocksBlockEntities.NETHER_GEYSER_BE.get(), NetherGeyserBlockEntity::tick);
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
+		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
+				.setValue(ACTIVE, false);
+	}
+
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(ACTIVE);
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
+		return SHAPE;
+	}
+
+	static {
+		SHAPE = box(5, 0, 5, 11, 1, 11);
+	}
+
+	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
+	}
 }

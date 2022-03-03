@@ -12,13 +12,13 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStatePr
 public class FeatureStates {
 	protected static final WeightedStateProvider StarfishStates = new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
 			.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION, StarfishVariation.RED).setValue(BlockStateProperties.WATERLOGGED, true), 6)
-			.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION,StarfishVariation.PINK).setValue(BlockStateProperties.WATERLOGGED, true), 7)
-			.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION,StarfishVariation.ORANGE).setValue(BlockStateProperties.WATERLOGGED, true), 2).build());
+			.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION, StarfishVariation.PINK).setValue(BlockStateProperties.WATERLOGGED, true), 7)
+			.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION, StarfishVariation.ORANGE).setValue(BlockStateProperties.WATERLOGGED, true), 2).build());
 
 	protected static final WeightedStateProvider SeashellStates = new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
 			.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION, SeashellVariation.YELLOW).setValue(BlockStateProperties.WATERLOGGED, true), 7)
-			.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION,SeashellVariation.PINK).setValue(BlockStateProperties.WATERLOGGED, true), 2)
-			.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION,SeashellVariation.WHITE).setValue(BlockStateProperties.WATERLOGGED, true), 6).build());
+			.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION, SeashellVariation.PINK).setValue(BlockStateProperties.WATERLOGGED, true), 2)
+			.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION, SeashellVariation.WHITE).setValue(BlockStateProperties.WATERLOGGED, true), 6).build());
 
 	protected static final WeightedStateProvider GeyserStates = new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
 			.add(RocksRegistry.GEYSER.get().defaultBlockState().setValue(BlockStateProperties.SNOWY, true), 1).build());

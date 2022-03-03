@@ -1,7 +1,10 @@
 {
   "required": true,
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_17",
   "package": "eu.midnightdust.motschen.rocks.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "refmap": "rocks.refmap.json",
+  "target": "@env(DEFAULT)",
   "client": [
     "MixinModelElementDeserializer"
   ],

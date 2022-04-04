@@ -36,9 +36,9 @@ public class RockFeatures {
 							.add(RocksRegistry.ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
 							.add(RocksRegistry.ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
 							.add(RocksRegistry.ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-					BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE,
+					BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.not(
 							BlockPredicate.matchesBlocks(ImmutableList.of(Blocks.ICE, Blocks.SAND, Blocks.RED_SAND),
-									new BlockPos(0, -1, 0))))));
+									new BlockPos(0, -1, 0)))))));
 	public static final Holder<ConfiguredFeature<RandomPatchConfiguration, ?>> GRANITE_ROCK_FEATURE = FeatureUtils.register(new ResourceLocation(Rocks.MOD_ID, "granite_rock").toString(),
 			Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
 					new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()

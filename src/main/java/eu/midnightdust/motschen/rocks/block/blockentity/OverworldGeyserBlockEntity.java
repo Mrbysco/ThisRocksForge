@@ -34,9 +34,8 @@ public class OverworldGeyserBlockEntity extends BlockEntity {
 				blockEntity.countdown = 1000;
 			} else {
 				if (blockEntity.countdown > 0) {
-					blockEntity.countdown = blockEntity.countdown - 1;
-				}
-				if (blockEntity.countdown == 0) {
+					blockEntity.countdown--;
+				} else {
 					world.setBlockAndUpdate(pos, state.setValue(OverworldGeyser.ACTIVE, false));
 				}
 			}

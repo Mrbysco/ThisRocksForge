@@ -1,0 +1,9 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [],
+  "features": "rocks:soul_soil_rock",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#minecraft:is_nether"
+  ]
+}

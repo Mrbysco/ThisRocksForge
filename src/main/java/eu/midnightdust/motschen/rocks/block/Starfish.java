@@ -63,7 +63,6 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 	public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
 		ItemStack stack = new ItemStack(this);
 		stack.getOrCreateTag().putString("variation", state.getValue(STARFISH_VARIATION).getSerializedName());
-		Rocks.LOGGER.info(state.getValue(STARFISH_VARIATION).getSerializedName());
 		return stack;
 	}
 

@@ -19,7 +19,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -56,8 +55,7 @@ public class Rocks {
 		RocksRegistry.ITEMS.register(eventBus);
 		RocksBlockEntities.BLOCK_ENTITIES.register(eventBus);
 		FeatureRegistry.FEATURES.register(eventBus);
-
-		MinecraftForge.EVENT_BUS.register(new WorldGenHandler());
+		WorldGenHandler.BIOME_MODIFIER_SERIALIZERS.register(eventBus);
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			eventBus.addListener(ClientHandler::onClientSetup);

@@ -25,7 +25,10 @@ public class OverworldGeyserBlockEntity extends BlockEntity {
 			Player player = world.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3, true);
 			Player player2 = world.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 8, true);
 
-			if (player2 != null && player2.getY() >= pos.getY() && (pos.getX() <= player2.getX() && pos.getX() + 1 >= player2.getX()) && (pos.getZ() <= player2.getZ() && pos.getZ() + 1 >= player2.getZ())) {
+			if (player2 != null &&
+					player2.getY() >= pos.getY() && player2.getY() <= pos.getY() + 5 &&
+					(pos.getX() <= player2.getX() && pos.getX() + 1 >= player2.getX()) &&
+					(pos.getZ() <= player2.getZ() && pos.getZ() + 1 >= player2.getZ())) {
 				player2.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 2, 10, true, false, false));
 			}
 
@@ -34,9 +37,8 @@ public class OverworldGeyserBlockEntity extends BlockEntity {
 				blockEntity.countdown = 1000;
 			} else {
 				if (blockEntity.countdown > 0) {
-					blockEntity.countdown = blockEntity.countdown - 1;
-				}
-				if (blockEntity.countdown == 0) {
+					blockEntity.countdown--;
+				} else {
 					world.setBlockAndUpdate(pos, state.setValue(OverworldGeyser.ACTIVE, false));
 				}
 			}

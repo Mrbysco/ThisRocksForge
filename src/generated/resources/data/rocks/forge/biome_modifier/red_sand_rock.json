@@ -1,0 +1,10 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [],
+  "features": "rocks:red_sand_rock",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#forge:is_sandy",
+    "#minecraft:is_badlands"
+  ]
+}

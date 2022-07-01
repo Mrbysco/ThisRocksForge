@@ -1,0 +1,11 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [
+    "#forge:is_snowy"
+  ],
+  "features": "rocks:seashell",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#minecraft:is_beach"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [],
+  "features": "rocks:crimson_stick",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#minecraft:is_nether"
+  ]
+}

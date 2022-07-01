@@ -1,0 +1,9 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [],
+  "features": "rocks:snowy_geyser",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#forge:is_snowy"
+  ]
+}

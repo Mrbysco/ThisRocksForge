@@ -2,6 +2,7 @@ package eu.midnightdust.motschen.rocks.world.feature;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,8 +12,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
-
-import java.util.Random;
 
 public class SnowFeature extends Feature<ProbabilityFeatureConfiguration> {
 	WeightedStateProvider weightedBlockStateProvider1;
@@ -24,7 +23,7 @@ public class SnowFeature extends Feature<ProbabilityFeatureConfiguration> {
 
 	@Override
 	public boolean place(FeaturePlaceContext<ProbabilityFeatureConfiguration> context) {
-		Random random = context.random();
+		RandomSource random = context.random();
 		WorldGenLevel structureWorldAccess = context.level();
 		BlockPos blockPos = context.origin();
 		boolean bl = false;

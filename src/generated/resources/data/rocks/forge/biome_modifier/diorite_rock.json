@@ -1,0 +1,16 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [
+    "#minecraft:is_nether",
+    "#minecraft:is_end",
+    "#minecraft:has_structure/igloo",
+    "#forge:is_sandy",
+    "#minecraft:is_badlands",
+    "#minecraft:is_ocean"
+  ],
+  "features": "rocks:diorite_rock",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#minecraft:is_overworld"
+  ]
+}

@@ -53,7 +53,7 @@ public class Rocks {
 
 		RocksRegistry.BLOCKS.register(eventBus);
 		RocksRegistry.ITEMS.register(eventBus);
-		RocksBlockEntities.BLOCK_ENTITIES.register(eventBus);
+		RocksBlockEntities.BLOCK_ENTITY_TYPES.register(eventBus);
 		FeatureRegistry.FEATURES.register(eventBus);
 		WorldGenHandler.BIOME_MODIFIER_SERIALIZERS.register(eventBus);
 

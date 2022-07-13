@@ -4,6 +4,6 @@
   "features": "rocks:endstone_rock",
   "step": "top_layer_modification",
   "whitelist": [
-    "#forge:is_end"
+    "#minecraft:is_end"
   ]
 }

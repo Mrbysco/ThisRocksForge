@@ -1,11 +1,11 @@
-// 1.19	2022-06-17T21:19:20.2148184	forge/biome_modifier generator for rocks
+// 1.19	2022-07-13T02:38:16.8532877	forge/biome_modifier generator for rocks
 499a1ea7338747d3f9efd8aca935d094c9f2befd data/rocks/forge/biome_modifier/acacia_stick.json
 ae9c22142f1517e39ae79d24ea0e4d6f834e2059 data/rocks/forge/biome_modifier/andesite_rock.json
 2299971cf5edd9976d5a1c9eea34f57b4029c7e9 data/rocks/forge/biome_modifier/birch_stick.json
 2bced2c8ad5ea282e8c56651883c20b2278974d1 data/rocks/forge/biome_modifier/crimson_stick.json
 184aeedd13f4ca8991056f937993ec8383db9443 data/rocks/forge/biome_modifier/dark_oak_stick.json
 c751c55d6b49d5424ad769e70a001dd2b5b9543f data/rocks/forge/biome_modifier/diorite_rock.json
-f983aec4b8ceddb3a5478fcbcf8f22d6fc1570ae data/rocks/forge/biome_modifier/endstone_rock.json
+75cfec442b01b0a219b4fc2b561781f04aac772c data/rocks/forge/biome_modifier/endstone_rock.json
 3794a594af9a58c774d7e2c2ff7655a1052b145c data/rocks/forge/biome_modifier/granite_rock.json
 36024d5d7795ce817697d5cc10a54acadd003a53 data/rocks/forge/biome_modifier/gravel_rock.json
 1fca0b0745dc7376ba015c9d2c8c226dec6eea9f data/rocks/forge/biome_modifier/jungle_stick.json

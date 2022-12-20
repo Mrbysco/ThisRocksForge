@@ -110,7 +110,7 @@ public class RocksDatagen {
 		List<PlacementModifier> netherModifiers = new ArrayList<>(NetherFeatures.netherModifiers);
 		netherModifiers.add(CountPlacement.of(90));
 		List<PlacementModifier> geyserModifiers = new ArrayList<>(NetherFeatures.netherModifiers);
-		netherModifiers.add(CountPlacement.of(30));
+		geyserModifiers.add(CountPlacement.of(30));
 		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHERRACK_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
 		map.putAll(generateConfiguredFeature(ops, NetherFeatures.SOUL_SOIL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
 		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHER_GRAVEL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));

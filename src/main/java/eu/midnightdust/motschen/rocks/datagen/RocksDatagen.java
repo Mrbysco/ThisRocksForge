@@ -1,10 +1,7 @@
 package eu.midnightdust.motschen.rocks.datagen;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.StarfishVariation;
@@ -15,24 +12,30 @@ import eu.midnightdust.motschen.rocks.world.configured_feature.RockFeatures;
 import eu.midnightdust.motschen.rocks.world.configured_feature.StickFeatures;
 import eu.midnightdust.motschen.rocks.world.modifier.AddFeaturesBlacklistBiomeModifier;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
-import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.biome.Biome;
@@ -40,189 +43,255 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.placement.CountPlacement;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTable.Builder;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.JsonCodecProvider;
-import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RocksDatagen {
 	@SubscribeEvent
 	public static void gatherData(GatherDataEvent event) {
-		final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.builtinCopy());
+		HolderLookup.Provider provider = getProvider();
+		final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, provider);
 		DataGenerator generator = event.getGenerator();
+		PackOutput packOutput = generator.getPackOutput();
+		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(event.includeServer(), new Loots(generator));
-			generator.addProvider(event.includeServer(), new Recipes(generator));
-			generator.addProvider(event.includeServer(), new RocksBiomeTags(generator, helper));
+			generator.addProvider(event.includeServer(), new Loots(packOutput));
+			generator.addProvider(event.includeServer(), new Recipes(packOutput));
+			generator.addProvider(event.includeServer(), new RocksBiomeTags(packOutput, lookupProvider, helper));
 
-			generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(generator, helper, Rocks.MOD_ID, ops, Registry.PLACED_FEATURE_REGISTRY, getConfiguredFeatures(ops)));
-
-			generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(generator, helper, Rocks.MOD_ID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS, getBiomeModifiers(ops)));
+			generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(
+					packOutput, CompletableFuture.supplyAsync(RocksDatagen::getProvider), Set.of("rocks")));
 		}
 	}
 
-	public static Map<ResourceLocation, PlacedFeature> getConfiguredFeatures(RegistryOps<JsonElement> ops) {
-		Map<ResourceLocation, PlacedFeature> map = Maps.newHashMap();
+	private static HolderLookup.Provider getProvider() {
+		final RegistrySetBuilder registryBuilder = new RegistrySetBuilder();
+		registryBuilder.add(Registries.CONFIGURED_FEATURE, context -> {
+			MiscFeatures.configuredBootstrap(context);
+			NetherFeatures.configuredBootstrap(context);
+			RockFeatures.configuredBootstrap(context);
+			StickFeatures.configuredBootstrap(context);
+		});
+		registryBuilder.add(Registries.PLACED_FEATURE, context -> {
+			MiscFeatures.placedBootstrap(context);
+			NetherFeatures.placedBootstrap(context);
+			RockFeatures.placedBootstrap(context);
+			StickFeatures.placedBootstrap(context);
+		});
+		registryBuilder.add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+			HolderGetter<Biome> biomeGetter = context.lookup(Registries.BIOME);
+			List<HolderSet<Biome>> overworld = List.of(biomeGetter.getOrThrow(BiomeTags.IS_OVERWORLD));
 
-		List<PlacementModifier> miscModifiers = new ArrayList<>(MiscFeatures.placementModifiers);
-		miscModifiers.add(CountPlacement.of(1));
-		map.putAll(generateConfiguredFeature(ops, MiscFeatures.SEASHELL_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), miscModifiers));
-		map.putAll(generateConfiguredFeature(ops, MiscFeatures.STARFISH_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), miscModifiers));
-		map.putAll(generateConfiguredFeature(ops, MiscFeatures.UNDERWATER_STARFISH_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), miscModifiers));
-		map.putAll(generateConfiguredFeature(ops, MiscFeatures.UNDERWATER_SEASHELL_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), miscModifiers));
-		map.putAll(generateConfiguredFeature(ops, MiscFeatures.SNOWY_GEYSER_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), miscModifiers));
+			List<HolderSet<Biome>> rockBlacklist = List.of(
+					biomeGetter.getOrThrow(BiomeTags.IS_NETHER), biomeGetter.getOrThrow(BiomeTags.IS_END),
+					biomeGetter.getOrThrow(BiomeTags.HAS_IGLOO), biomeGetter.getOrThrow(Tags.Biomes.IS_SANDY),
+					biomeGetter.getOrThrow(BiomeTags.IS_BADLANDS), biomeGetter.getOrThrow(BiomeTags.IS_OCEAN));
+			context.register(RocksModifiers.ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(overworld, rockBlacklist,
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.GRANITE_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(overworld, rockBlacklist,
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_GRANITE_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.DIORITE_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(overworld, rockBlacklist,
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_DIORITE_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.ANDESITE_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(overworld, rockBlacklist,
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_ANDESITE_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 
-		List<PlacementModifier> netherModifiers = new ArrayList<>(NetherFeatures.netherModifiers);
-		netherModifiers.add(CountPlacement.of(90));
-		List<PlacementModifier> geyserModifiers = new ArrayList<>(NetherFeatures.netherModifiers);
-		netherModifiers.add(CountPlacement.of(30));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHERRACK_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.SOUL_SOIL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHER_GRAVEL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHER_GEYSER_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), geyserModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.WARPED_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.CRIMSON_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
+			context.register(RocksModifiers.SAND_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_BEACH),
+							biomeGetter.getOrThrow(Tags.Biomes.IS_SANDY),
+							biomeGetter.getOrThrow(BiomeTags.IS_BADLANDS)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_SAND_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.RED_SAND_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(Tags.Biomes.IS_SANDY),
+							biomeGetter.getOrThrow(BiomeTags.IS_BADLANDS)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_RED_SAND_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.ENDSTONE_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_END)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_END_STONE_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 
-		List<PlacementModifier> rockModifiers = new ArrayList<>(RockFeatures.rockModifiers);
-		rockModifiers.add(CountPlacement.of(3));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.GRANITE_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.DIORITE_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.ANDESITE_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.SAND_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.RED_SAND_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.END_STONE_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.GRAVEL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
+			context.register(RocksModifiers.OAK_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_FOREST),
+							biomeGetter.getOrThrow(Tags.Biomes.IS_PLAINS),
+							biomeGetter.getOrThrow(Tags.Biomes.IS_SWAMP)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_OAK_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.BIRCH_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_FOREST)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_BIRCH_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.PINECONE_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_TAIGA)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_PINECONE_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.SPRUCE_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_TAIGA)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_SPRUCE_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.ACACIA_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_SAVANNA)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_ACACIA_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.JUNGLE_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_JUNGLE)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_JUNGLE_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.DARK_OAK_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(RocksBiomeTags.IS_DARK_FOREST)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_DARK_OAK_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 
-		List<PlacementModifier> stickModifiers = new ArrayList<>(StickFeatures.stickModifiers);
-		stickModifiers.add(CountPlacement.of(3));
-		map.putAll(generateConfiguredFeature(ops, StickFeatures.OAK_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
-		map.putAll(generateConfiguredFeature(ops, StickFeatures.SPRUCE_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
-		map.putAll(generateConfiguredFeature(ops, StickFeatures.PINECONE_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
-		map.putAll(generateConfiguredFeature(ops, StickFeatures.BIRCH_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
-		map.putAll(generateConfiguredFeature(ops, StickFeatures.ACACIA_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
-		map.putAll(generateConfiguredFeature(ops, StickFeatures.JUNGLE_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
-		map.putAll(generateConfiguredFeature(ops, StickFeatures.DARK_OAK_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
+			context.register(RocksModifiers.SEASHELL_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_BEACH)),
+					List.of(biomeGetter.getOrThrow(Tags.Biomes.IS_SNOWY)),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(MiscFeatures.PLACED_SEASHELL_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.STARFISH_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_BEACH)),
+					List.of(biomeGetter.getOrThrow(Tags.Biomes.IS_SNOWY)),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(MiscFeatures.PLACED_STARFISH_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 
-		return map;
-	}
+			context.register(RocksModifiers.UNDERWATER_SEASHELL_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_OCEAN)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(MiscFeatures.PLACED_UNDERWATER_SEASHELL_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.UNDERWATER_STARFISH_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_OCEAN)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(MiscFeatures.PLACED_UNDERWATER_STARFISH_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 
-	private static Map<ResourceLocation, PlacedFeature> generateConfiguredFeature(RegistryOps<JsonElement> ops, ResourceKey<ConfiguredFeature<?, ?>> featureKey, List<PlacementModifier> modifiers) {
-		final Holder<ConfiguredFeature<?, ?>> featureKeyHolder = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(featureKey);
-		final PlacedFeature feature = new PlacedFeature(featureKeyHolder, modifiers);
-		return Map.of(featureKey.location(), feature);
-	}
+			context.register(RocksModifiers.SNOWY_GEYSER_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(Tags.Biomes.IS_SNOWY)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(MiscFeatures.PLACED_SNOWY_GEYSER_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.GRAVEL_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					overworld,
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER),
+							biomeGetter.getOrThrow(BiomeTags.IS_END)),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_GRAVEL_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.GRAVEL_ROCK_NETHER_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_END),
+							biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(RockFeatures.PLACED_GRAVEL_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 
-	public static Map<ResourceLocation, BiomeModifier> getBiomeModifiers(RegistryOps<JsonElement> ops) {
-		Map<ResourceLocation, BiomeModifier> map = Maps.newHashMap();
-
-		List<TagKey<Biome>> overworld = List.of(BiomeTags.IS_OVERWORLD);
-		List<TagKey<Biome>> rockBlacklist = List.of(BiomeTags.IS_NETHER, BiomeTags.IS_END, BiomeTags.HAS_IGLOO, Tags.Biomes.IS_SANDY, BiomeTags.IS_BADLANDS, BiomeTags.IS_OCEAN);
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "rock"), overworld, rockBlacklist, Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "granite_rock"), overworld, rockBlacklist, Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "diorite_rock"), overworld, rockBlacklist, Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "andesite_rock"), overworld, rockBlacklist, Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "sand_rock"), List.of(BiomeTags.IS_BEACH, Tags.Biomes.IS_SANDY, BiomeTags.IS_BADLANDS), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "red_sand_rock"), List.of(Tags.Biomes.IS_SANDY, BiomeTags.IS_BADLANDS), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "endstone_rock"), List.of(BiomeTags.IS_END), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "oak_stick"), List.of(BiomeTags.IS_FOREST, Tags.Biomes.IS_PLAINS, Tags.Biomes.IS_SWAMP), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "birch_stick"), List.of(BiomeTags.IS_FOREST), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "pinecone"), List.of(BiomeTags.IS_TAIGA), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "spruce_stick"), List.of(BiomeTags.IS_TAIGA), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "acacia_stick"), List.of(BiomeTags.IS_SAVANNA), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "jungle_stick"), List.of(BiomeTags.IS_JUNGLE), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "dark_oak_stick"), List.of(RocksBiomeTags.IS_DARK_FOREST), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "seashell"), List.of(BiomeTags.IS_BEACH), List.of(Tags.Biomes.IS_SNOWY), Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "starfish"), List.of(BiomeTags.IS_BEACH), List.of(Tags.Biomes.IS_SNOWY), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "underwater_seashell"), List.of(BiomeTags.IS_OCEAN), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "underwater_starfish"), List.of(BiomeTags.IS_OCEAN), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "snowy_geyser"), List.of(Tags.Biomes.IS_SNOWY), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "gravel_rock"), List.of(BiomeTags.IS_NETHER), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "gravel_rock"), overworld, List.of(BiomeTags.IS_END, BiomeTags.IS_NETHER), Decoration.TOP_LAYER_MODIFICATION));
-
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "netherrack_rock"), List.of(BiomeTags.IS_NETHER), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "soul_soil_rock"), List.of(BiomeTags.IS_NETHER), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "nether_gravel_rock"), List.of(BiomeTags.IS_NETHER), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "nether_geyser"), List.of(BiomeTags.IS_NETHER), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "warped_stick"), List.of(BiomeTags.IS_NETHER), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "crimson_stick"), List.of(BiomeTags.IS_NETHER), List.of(), Decoration.TOP_LAYER_MODIFICATION));
-
-		return map;
-	}
-
-	private static Map<ResourceLocation, BiomeModifier> generateBiomeModifier(RegistryOps<JsonElement> ops, ResourceLocation location, @NotNull List<TagKey<Biome>> tags, @Nullable List<TagKey<Biome>> blacklistTags, Decoration decorationType) {
-		final List<HolderSet<Biome>> tagHolders = tags.stream().map(tag -> new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), tag)).collect(Collectors.toList());
-		final List<HolderSet<Biome>> blacklistTagHolders = blacklistTags.isEmpty() ? List.of() : blacklistTags.stream().map(tag -> new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), tag)).collect(Collectors.toList());
-		final BiomeModifier addFeature = new AddFeaturesBlacklistBiomeModifier(tagHolders, blacklistTagHolders, HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, location))), decorationType);
-		return Map.of(location, addFeature);
+			context.register(RocksModifiers.NETHERRACK_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					List.of(),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(NetherFeatures.PLACED_NETHERRACK_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.SOUL_SOIL_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					List.of(),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(NetherFeatures.PLACED_SOUL_SOIL_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.NETHER_GRAVEL_ROCK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					List.of(),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(NetherFeatures.PLACED_NETHER_GRAVEL_ROCK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.WARPED_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					List.of(),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(NetherFeatures.PLACED_WARPED_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.CRIMSON_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					List.of(),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(NetherFeatures.PLACED_CRIMSON_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.NETHER_GEYSER_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_NETHER)),
+					List.of(),
+					HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(NetherFeatures.PLACED_NETHER_GEYSER_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+		});
+		// We need the BIOME registry to be present so we can use a biome tag, doesn't matter that it's empty
+		registryBuilder.add(Registries.BIOME, context -> {
+		});
+		RegistryAccess.Frozen regAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
+		return registryBuilder.buildPatch(regAccess, VanillaRegistries.createLookup());
 	}
 
 
 	private static class Loots extends LootTableProvider {
-		public Loots(DataGenerator gen) {
-			super(gen);
+		public Loots(PackOutput packOutput) {
+			super(packOutput, Set.of(), List.of(
+					new SubProviderEntry(RocksBlockTables::new, LootContextParamSets.BLOCK)
+			));
 		}
 
-		@Override
-		protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, Builder>>>, LootContextParamSet>> getTables() {
-			return ImmutableList.of(Pair.of(GeOreBlockTables::new, LootContextParamSets.BLOCK));
-		}
+		public static class RocksBlockTables extends BlockLootSubProvider {
 
-		public static class GeOreBlockTables extends BlockLoot {
+			protected RocksBlockTables() {
+				super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+			}
+
 			private static final float[] NAUTILOUS_CHANCE = new float[]{0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F};
 
 			@Override
-			protected void addTables() {
+			protected void generate() {
 				this.dropOther(RocksRegistry.ACACIA_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.BIRCH_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.CRIMSON_STICK.get(), Items.STICK);
@@ -252,11 +321,11 @@ public class RocksDatagen {
 				this.add(RocksRegistry.NETHER_GEYSER.get(), noDrop());
 			}
 
-			protected static LootTable.Builder createSeashellDrop(Block block) {
+			protected LootTable.Builder createSeashellDrop(Block block) {
 				return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(applyExplosionDecay(block, LootItem.lootTableItem(Items.NAUTILUS_SHELL).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, NAUTILOUS_CHANCE)))));
 			}
 
-			protected static LootTable.Builder createStarfishDrop(Block starFish) {
+			protected LootTable.Builder createStarfishDrop(Block starFish) {
 				return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(applyExplosionDecay(starFish, LootItem.lootTableItem(starFish).apply(SetNbtFunction.setTag(getStarfishTag("red"))).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(starFish).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Rocks.STARFISH_VARIATION, StarfishVariation.RED))))).add(applyExplosionDecay(starFish, LootItem.lootTableItem(starFish).apply(SetNbtFunction.setTag(getStarfishTag("pink"))).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(starFish).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Rocks.STARFISH_VARIATION, StarfishVariation.PINK))))).add(applyExplosionDecay(starFish, LootItem.lootTableItem(starFish).apply(SetNbtFunction.setTag(getStarfishTag("orange"))).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(starFish).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Rocks.STARFISH_VARIATION, StarfishVariation.ORANGE))))));
 			}
 
@@ -279,43 +348,43 @@ public class RocksDatagen {
 	}
 
 	public static class Recipes extends RecipeProvider {
-		public Recipes(DataGenerator generator) {
-			super(generator);
+		public Recipes(PackOutput packOutput) {
+			super(packOutput);
 		}
 
 		@Override
-		protected void buildCraftingRecipes(Consumer<FinishedRecipe> recipeConsumer) {
-			ShapelessRecipeBuilder.shapeless(Blocks.ANDESITE).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "andesite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.COBBLESTONE).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "cobblestone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.DIORITE).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "diorite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.END_STONE).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "end_stone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.GRANITE).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "granite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.NETHERRACK).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "netherrack_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.RED_SANDSTONE).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "red_sandstone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.SANDSTONE).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "sandstone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(Blocks.SOUL_SOIL).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "soul_soil_from_splitter"));
+		protected void buildRecipes(Consumer<FinishedRecipe> recipeConsumer) {
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.ANDESITE).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "andesite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.COBBLESTONE).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "cobblestone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIORITE).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "diorite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.END_STONE).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "end_stone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.GRANITE).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "granite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.NETHERRACK).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "netherrack_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.RED_SANDSTONE).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "red_sandstone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SANDSTONE).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "sandstone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SOUL_SOIL).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "soul_soil_from_splitter"));
 		}
 
 		@Override
-		protected void saveAdvancement(CachedOutput output, JsonObject jsonObject, Path path) {
-			//NOOP
+		protected @Nullable CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
+			return null;
 		}
 	}
 
 
 	public static class RocksBiomeTags extends BiomeTagsProvider {
-		public RocksBiomeTags(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper) {
-			super(generator, Rocks.MOD_ID, existingFileHelper);
+		public RocksBiomeTags(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+			super(packOutput, lookupProvider, Rocks.MOD_ID, existingFileHelper);
 		}
 
 		public static final TagKey<Biome> IS_DARK_FOREST = create(new ResourceLocation("forge", "is_dark_forest"));
 
 		private static TagKey<Biome> create(ResourceLocation location) {
-			return TagKey.create(Registry.BIOME_REGISTRY, location);
+			return TagKey.create(Registries.BIOME, location);
 		}
 
 		@Override
-		protected void addTags() {
+		protected void addTags(HolderLookup.Provider provider) {
 			this.tag(IS_DARK_FOREST).add(Biomes.DARK_FOREST);
 		}
 	}

@@ -47,39 +47,39 @@ public class RocksRegistry {
 	public static final RegistryObject<Block> NETHER_GEYSER = BLOCKS.register("nether_geyser", () -> new NetherGeyser());
 
 	//Items
-	public static final RegistryObject<Item> ROCK_ITEM = ITEMS.register("rock", () -> new BlockItem(ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> GRANITE_ROCK_ITEM = ITEMS.register("granite_rock", () -> new BlockItem(GRANITE_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> DIORITE_ROCK_ITEM = ITEMS.register("diorite_rock", () -> new BlockItem(DIORITE_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> ANDESITE_ROCK_ITEM = ITEMS.register("andesite_rock", () -> new BlockItem(ANDESITE_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> SAND_ROCK_ITEM = ITEMS.register("sand_rock", () -> new BlockItem(SAND_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> RED_SAND_ROCK_ITEM = ITEMS.register("red_sand_rock", () -> new BlockItem(RED_SAND_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> GRAVEL_ROCK_ITEM = ITEMS.register("gravel_rock", () -> new BlockItem(GRAVEL_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> END_STONE_ROCK_ITEM = ITEMS.register("end_stone_rock", () -> new BlockItem(END_STONE_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> NETHERRACK_ROCK_ITEM = ITEMS.register("netherrack_rock", () -> new BlockItem(NETHERRACK_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> SOUL_SOIL_ROCK_ITEM = ITEMS.register("soul_soil_rock", () -> new BlockItem(SOUL_SOIL_ROCK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
+	public static final RegistryObject<Item> ROCK_ITEM = ITEMS.register("rock", () -> new BlockItem(ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> GRANITE_ROCK_ITEM = ITEMS.register("granite_rock", () -> new BlockItem(GRANITE_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> DIORITE_ROCK_ITEM = ITEMS.register("diorite_rock", () -> new BlockItem(DIORITE_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> ANDESITE_ROCK_ITEM = ITEMS.register("andesite_rock", () -> new BlockItem(ANDESITE_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> SAND_ROCK_ITEM = ITEMS.register("sand_rock", () -> new BlockItem(SAND_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> RED_SAND_ROCK_ITEM = ITEMS.register("red_sand_rock", () -> new BlockItem(RED_SAND_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> GRAVEL_ROCK_ITEM = ITEMS.register("gravel_rock", () -> new BlockItem(GRAVEL_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> END_STONE_ROCK_ITEM = ITEMS.register("end_stone_rock", () -> new BlockItem(END_STONE_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> NETHERRACK_ROCK_ITEM = ITEMS.register("netherrack_rock", () -> new BlockItem(NETHERRACK_ROCK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> SOUL_SOIL_ROCK_ITEM = ITEMS.register("soul_soil_rock", () -> new BlockItem(SOUL_SOIL_ROCK.get(), new Item.Properties()));
 
-	public static final RegistryObject<Item> OAK_STICK_ITEM = ITEMS.register("oak_stick", () -> new BlockItem(OAK_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> SPRUCE_STICK_ITEM = ITEMS.register("spruce_stick", () -> new BlockItem(SPRUCE_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> BIRCH_STICK_ITEM = ITEMS.register("birch_stick", () -> new BlockItem(BIRCH_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> ACACIA_STICK_ITEM = ITEMS.register("acacia_stick", () -> new BlockItem(ACACIA_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> JUNGLE_STICK_ITEM = ITEMS.register("jungle_stick", () -> new BlockItem(JUNGLE_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> DARK_OAK_STICK_ITEM = ITEMS.register("dark_oak_stick", () -> new BlockItem(DARK_OAK_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> CRIMSON_STICK_ITEM = ITEMS.register("crimson_stick", () -> new BlockItem(CRIMSON_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> WARPED_STICK_ITEM = ITEMS.register("warped_stick", () -> new BlockItem(WARPED_STICK.get(), new Item.Properties().tab(Rocks.RocksGroup)));
+	public static final RegistryObject<Item> OAK_STICK_ITEM = ITEMS.register("oak_stick", () -> new BlockItem(OAK_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> SPRUCE_STICK_ITEM = ITEMS.register("spruce_stick", () -> new BlockItem(SPRUCE_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> BIRCH_STICK_ITEM = ITEMS.register("birch_stick", () -> new BlockItem(BIRCH_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> ACACIA_STICK_ITEM = ITEMS.register("acacia_stick", () -> new BlockItem(ACACIA_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> JUNGLE_STICK_ITEM = ITEMS.register("jungle_stick", () -> new BlockItem(JUNGLE_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> DARK_OAK_STICK_ITEM = ITEMS.register("dark_oak_stick", () -> new BlockItem(DARK_OAK_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> CRIMSON_STICK_ITEM = ITEMS.register("crimson_stick", () -> new BlockItem(CRIMSON_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> WARPED_STICK_ITEM = ITEMS.register("warped_stick", () -> new BlockItem(WARPED_STICK.get(), new Item.Properties()));
 
-	public static final RegistryObject<Item> PINECONE_ITEM = ITEMS.register("pinecone", () -> new BlockItem(PINECONE.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> SEASHELL_ITEM = ITEMS.register("seashell", () -> new BlockItem(SEASHELL.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> STARFISH_ITEM = ITEMS.register("starfish", () -> new BlockItem(STARFISH.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> GEYSER_ITEM = ITEMS.register("geyser", () -> new BlockItem(GEYSER.get(), new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> NETHER_GEYSER_ITEM = ITEMS.register("nether_geyser", () -> new BlockItem(NETHER_GEYSER.get(), new Item.Properties().tab(Rocks.RocksGroup)));
+	public static final RegistryObject<Item> PINECONE_ITEM = ITEMS.register("pinecone", () -> new BlockItem(PINECONE.get(), new Item.Properties()));
+	public static final RegistryObject<Item> SEASHELL_ITEM = ITEMS.register("seashell", () -> new BlockItem(SEASHELL.get(), new Item.Properties()));
+	public static final RegistryObject<Item> STARFISH_ITEM = ITEMS.register("starfish", () -> new BlockItem(STARFISH.get(), new Item.Properties()));
+	public static final RegistryObject<Item> GEYSER_ITEM = ITEMS.register("geyser", () -> new BlockItem(GEYSER.get(), new Item.Properties()));
+	public static final RegistryObject<Item> NETHER_GEYSER_ITEM = ITEMS.register("nether_geyser", () -> new BlockItem(NETHER_GEYSER.get(), new Item.Properties()));
 
-	public static final RegistryObject<Item> COBBLESTONE_SPLITTER = ITEMS.register("cobblestone_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> GRANITE_SPLITTER = ITEMS.register("granite_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> DIORITE_SPLITTER = ITEMS.register("diorite_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> ANDESITE_SPLITTER = ITEMS.register("andesite_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> SANDSTONE_SPLITTER = ITEMS.register("sandstone_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> RED_SANDSTONE_SPLITTER = ITEMS.register("red_sandstone_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> END_STONE_SPLITTER = ITEMS.register("end_stone_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> NETHERRACK_SPLITTER = ITEMS.register("netherrack_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
-	public static final RegistryObject<Item> SOUL_SOIL_SPLITTER = ITEMS.register("soul_soil_splitter", () -> new Item(new Item.Properties().tab(Rocks.RocksGroup)));
+	public static final RegistryObject<Item> COBBLESTONE_SPLITTER = ITEMS.register("cobblestone_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> GRANITE_SPLITTER = ITEMS.register("granite_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> DIORITE_SPLITTER = ITEMS.register("diorite_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> ANDESITE_SPLITTER = ITEMS.register("andesite_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SANDSTONE_SPLITTER = ITEMS.register("sandstone_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> RED_SANDSTONE_SPLITTER = ITEMS.register("red_sandstone_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> END_STONE_SPLITTER = ITEMS.register("end_stone_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> NETHERRACK_SPLITTER = ITEMS.register("netherrack_splitter", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SOUL_SOIL_SPLITTER = ITEMS.register("soul_soil_splitter", () -> new Item(new Item.Properties()));
 }

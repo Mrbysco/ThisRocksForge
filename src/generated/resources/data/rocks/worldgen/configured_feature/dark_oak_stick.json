@@ -1,0 +1,61 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+              {
+                "data": {
+                  "Name": "rocks:dark_oak_stick",
+                  "Properties": {
+                    "variation": "small"
+                  }
+                },
+                "weight": 7
+              },
+              {
+                "data": {
+                  "Name": "rocks:dark_oak_stick",
+                  "Properties": {
+                    "variation": "medium"
+                  }
+                },
+                "weight": 5
+              },
+              {
+                "data": {
+                  "Name": "rocks:dark_oak_stick",
+                  "Properties": {
+                    "variation": "large"
+                  }
+                },
+                "weight": 1
+              }
+            ]
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:all_of",
+            "predicates": [
+              {
+                "type": "minecraft:matching_blocks",
+                "blocks": "minecraft:air"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "tries": 128,
+    "xz_spread": 0,
+    "y_spread": 0
+  }
+}

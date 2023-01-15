@@ -3,6 +3,7 @@ package eu.midnightdust.motschen.rocks.world.configured_feature;
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.StickVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
+import eu.midnightdust.motschen.rocks.world.configured_feature.util.ListHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
@@ -75,19 +77,19 @@ public class StickFeatures {
 					BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
 
 	public static Holder<PlacedFeature> OAK_STICK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "oak_stick").toString(),
-			OAK_STICK_FEATURE, stickModifiers);
+			OAK_STICK_FEATURE, ListHelper.getMergedModifierList(stickModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> SPRUCE_STICK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "spruce_stick").toString(),
-			SPRUCE_STICK_FEATURE, stickModifiers);
+			SPRUCE_STICK_FEATURE, ListHelper.getMergedModifierList(stickModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> PINECONE_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "pinecone").toString(),
-			PINECONE_FEATURE, RarityFilter.onAverageOnceEvery(3), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+			PINECONE_FEATURE, CountPlacement.of(3), RarityFilter.onAverageOnceEvery(3), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
 	public static Holder<PlacedFeature> BIRCH_STICK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "birch_stick").toString(),
-			BIRCH_STICK_FEATURE, stickModifiers);
+			BIRCH_STICK_FEATURE, ListHelper.getMergedModifierList(stickModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> ACACIA_STICK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "acacia_stick").toString(),
-			ACACIA_STICK_FEATURE, stickModifiers);
+			ACACIA_STICK_FEATURE, ListHelper.getMergedModifierList(stickModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> JUNGLE_STICK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "jungle_stick").toString(),
-			JUNGLE_STICK_FEATURE, stickModifiers);
+			JUNGLE_STICK_FEATURE, ListHelper.getMergedModifierList(stickModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> DARK_OAK_STICK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "dark_oak_stick").toString(),
-			DARK_OAK_STICK_FEATURE, stickModifiers);
+			DARK_OAK_STICK_FEATURE, ListHelper.getMergedModifierList(stickModifiers, CountPlacement.of(3)));
 
 	public static void init() {
 		//Just here to load the class

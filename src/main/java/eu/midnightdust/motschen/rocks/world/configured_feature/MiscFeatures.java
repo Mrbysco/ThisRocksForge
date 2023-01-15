@@ -6,6 +6,7 @@ import eu.midnightdust.motschen.rocks.blockstates.SeashellVariation;
 import eu.midnightdust.motschen.rocks.blockstates.StarfishVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import eu.midnightdust.motschen.rocks.world.FeatureRegistry;
+import eu.midnightdust.motschen.rocks.world.configured_feature.util.ListHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.features.FeatureUtils;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
@@ -64,15 +66,15 @@ public class MiscFeatures {
 				FeatureRegistry.SNOWY_GEYSER_FEATURE.get(), new ProbabilityFeatureConfiguration(1));
 
 	public static final Holder<PlacedFeature> SEASHELL_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "seashell").toString(),
-			SEASHELL_FEATURE, placementModifiers);
+			SEASHELL_FEATURE, ListHelper.getMergedModifierList(placementModifiers, CountPlacement.of(1)));
 	public static final Holder<PlacedFeature> STARFISH_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "starfish").toString(),
-			STARFISH_FEATURE, placementModifiers);
+			STARFISH_FEATURE, ListHelper.getMergedModifierList(placementModifiers, CountPlacement.of(1)));
 	public static final Holder<PlacedFeature> UNDERWATER_SEASHELL_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "underwater_seashell").toString(),
-			UNDERWATER_STARFISH_FEATURE, placementModifiers);
+			UNDERWATER_STARFISH_FEATURE, ListHelper.getMergedModifierList(placementModifiers, CountPlacement.of(3)));
 	public static final Holder<PlacedFeature> UNDERWATER_STARFISH_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "underwater_starfish").toString(),
-			UNDERWATER_SEASHELL_FEATURE, placementModifiers);
+			UNDERWATER_SEASHELL_FEATURE, ListHelper.getMergedModifierList(placementModifiers, CountPlacement.of(3)));
 	public static final Holder<PlacedFeature> SNOWY_GEYSER_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "snowy_geyser").toString(),
-			SNOWY_GEYSER_FEATURE, placementModifiers);
+			SNOWY_GEYSER_FEATURE, ListHelper.getMergedModifierList(placementModifiers, CountPlacement.of(3)));
 
 	public static void init() {
 		//Just here to load the class

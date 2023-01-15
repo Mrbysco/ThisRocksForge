@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.RockVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
+import eu.midnightdust.motschen.rocks.world.configured_feature.util.ListHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.features.FeatureUtils;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
@@ -104,21 +106,21 @@ public class RockFeatures {
 									new BlockPos(0, -1, 0))))));
 
 	public static Holder<PlacedFeature> ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "rock").toString(),
-			ROCK_FEATURE, rockModifiers);
+			ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> GRANITE_ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "granite_rock").toString(),
-			GRANITE_ROCK_FEATURE, rockModifiers);
+			GRANITE_ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> DIORITE_ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "diorite_rock").toString(),
-			DIORITE_ROCK_FEATURE, rockModifiers);
+			DIORITE_ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> ANDESITE_ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "andesite_rock").toString(),
-			ANDESITE_ROCK_FEATURE, rockModifiers);
+			ANDESITE_ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> SAND_ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "sand_rock").toString(),
-			SAND_ROCK_FEATURE, rockModifiers);
+			SAND_ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> RED_SAND_ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "red_sand_rock").toString(),
-			RED_SAND_ROCK_FEATURE, rockModifiers);
+			RED_SAND_ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> END_STONE_ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "endstone_rock").toString(),
-			END_STONE_ROCK_FEATURE, rockModifiers);
+			END_STONE_ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 	public static Holder<PlacedFeature> GRAVEL_ROCK_PLACED_FEATURE = PlacementUtils.register(new ResourceLocation(Rocks.MOD_ID, "gravel_rock").toString(),
-			GRAVEL_ROCK_FEATURE, rockModifiers);
+			GRAVEL_ROCK_FEATURE, ListHelper.getMergedModifierList(rockModifiers, CountPlacement.of(3)));
 
 	public static void init() {
 		//Just here to load the class

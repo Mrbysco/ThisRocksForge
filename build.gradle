@@ -1,7 +1,8 @@
 plugins {
-    id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.+'
     id 'org.spongepowered.mixin'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'com.modrinth.minotaur' version "2.+"
 }
 
 version = "${version}"
@@ -123,34 +124,9 @@ jar {
     }
 }
 
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
-}
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact(reobfArtifact) {
-                builtBy reobfArtifact
-                artifactId = archivesBaseName
-                classifier null
-            }
-        }
-    }
-    repositories {
-        if (System.getenv().SAP_SECRET) {
-            maven {
-                url "https://maven.saps.dev/minecraft"
-                credentials {
-                    username = "mrbysco"
-                    password = "${System.getenv().SAP_SECRET}"
-                }
-            }
-        }
-    }
-}
-
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+apply from: 'gradle/curseforge.gradle'
+apply from: 'gradle/modrinth.gradle'

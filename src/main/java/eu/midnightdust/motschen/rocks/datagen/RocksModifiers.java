@@ -36,6 +36,8 @@ public class RocksModifiers {
 			new ResourceLocation(Rocks.MOD_ID, "jungle_stick"));
 	protected static final ResourceKey<BiomeModifier> DARK_OAK_STICK_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
 			new ResourceLocation(Rocks.MOD_ID, "dark_oak_stick"));
+	protected static final ResourceKey<BiomeModifier> MANGROVE_STICK_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+			new ResourceLocation(Rocks.MOD_ID, "mangrove_stick"));
 
 	protected static final ResourceKey<BiomeModifier> SEASHELL_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
 			new ResourceLocation(Rocks.MOD_ID, "seashell"));

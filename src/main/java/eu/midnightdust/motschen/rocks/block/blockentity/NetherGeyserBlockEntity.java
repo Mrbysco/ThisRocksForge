@@ -1,11 +1,11 @@
 package eu.midnightdust.motschen.rocks.block.blockentity;
 
 import eu.midnightdust.motschen.rocks.block.NetherGeyser;
+import eu.midnightdust.motschen.rocks.config.RocksConfig;
 import eu.midnightdust.motschen.rocks.registry.RocksBlockEntities;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,9 +28,11 @@ public class NetherGeyserBlockEntity extends BlockEntity {
 			if (player != null) {
 				world.setBlockAndUpdate(pos, state.setValue(NetherGeyser.ACTIVE, true));
 
-				player.hurt(player.damageSources().onFire(), 1);
-				if (player2 != null) {
-					player2.hurt(player.damageSources().onFire(), 4);
+				if (RocksConfig.COMMON.netherGeyserDamage.get()) {
+					player.hurt(player.damageSources().onFire(), 1);
+					if (player2 != null) {
+						player2.hurt(player.damageSources().onFire(), 4);
+					}
 				}
 				blockEntity.countdown = 1000;
 			} else {

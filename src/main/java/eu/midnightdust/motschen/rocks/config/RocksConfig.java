@@ -9,10 +9,20 @@ import org.apache.commons.lang3.tuple.Pair;
 public class RocksConfig {
 
 	public static class Common {
+		public final ForgeConfigSpec.BooleanValue geyserLevitation;
+		public final ForgeConfigSpec.BooleanValue netherGeyserDamage;
 
 		Common(ForgeConfigSpec.Builder builder) {
 			builder.comment("General settings")
 					.push("General");
+
+			geyserLevitation = builder
+					.comment("Setting this to false disables the levitation effect from Geysers (Default: true)")
+					.define("geyserLevitation", true);
+
+			netherGeyserDamage = builder
+					.comment("Setting this to false disables the damage from Nether Geysers (Default: true)")
+					.define("netherGeyserDamage", true);
 
 			builder.pop();
 		}

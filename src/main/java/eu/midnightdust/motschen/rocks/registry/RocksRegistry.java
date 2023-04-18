@@ -37,6 +37,7 @@ public class RocksRegistry {
 	public static final RegistryObject<Block> ACACIA_STICK = BLOCKS.register("acacia_stick", () -> new Stick());
 	public static final RegistryObject<Block> JUNGLE_STICK = BLOCKS.register("jungle_stick", () -> new Stick());
 	public static final RegistryObject<Block> DARK_OAK_STICK = BLOCKS.register("dark_oak_stick", () -> new Stick());
+	public static final RegistryObject<Block> MANGROVE_STICK = BLOCKS.register("mangrove_stick", () -> new Stick());
 	public static final RegistryObject<Block> CRIMSON_STICK = BLOCKS.register("crimson_stick", () -> new Stick());
 	public static final RegistryObject<Block> WARPED_STICK = BLOCKS.register("warped_stick", () -> new Stick());
 
@@ -64,6 +65,7 @@ public class RocksRegistry {
 	public static final RegistryObject<Item> ACACIA_STICK_ITEM = ITEMS.register("acacia_stick", () -> new BlockItem(ACACIA_STICK.get(), new Item.Properties()));
 	public static final RegistryObject<Item> JUNGLE_STICK_ITEM = ITEMS.register("jungle_stick", () -> new BlockItem(JUNGLE_STICK.get(), new Item.Properties()));
 	public static final RegistryObject<Item> DARK_OAK_STICK_ITEM = ITEMS.register("dark_oak_stick", () -> new BlockItem(DARK_OAK_STICK.get(), new Item.Properties()));
+	public static final RegistryObject<Item> MANGROVE_STICK_ITEM = ITEMS.register("mangrove_stick", () -> new BlockItem(MANGROVE_STICK.get(), new Item.Properties()));
 	public static final RegistryObject<Item> CRIMSON_STICK_ITEM = ITEMS.register("crimson_stick", () -> new BlockItem(CRIMSON_STICK.get(), new Item.Properties()));
 	public static final RegistryObject<Item> WARPED_STICK_ITEM = ITEMS.register("warped_stick", () -> new BlockItem(WARPED_STICK.get(), new Item.Properties()));
 

@@ -180,6 +180,11 @@ public class RocksDatagen {
 					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_DARK_OAK_STICK_FEATURE)),
 					Decoration.TOP_LAYER_MODIFICATION
 			));
+			context.register(RocksModifiers.MANGROVE_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(RocksBiomeTags.IS_MANGROVE_SWAMP)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_MANGROVE_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 
 			context.register(RocksModifiers.SEASHELL_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
 					List.of(biomeGetter.getOrThrow(BiomeTags.IS_BEACH)),
@@ -292,6 +297,7 @@ public class RocksDatagen {
 				this.dropOther(RocksRegistry.CRIMSON_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.DARK_OAK_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.JUNGLE_STICK.get(), Items.STICK);
+				this.dropOther(RocksRegistry.MANGROVE_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.OAK_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.SPRUCE_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.WARPED_STICK.get(), Items.STICK);
@@ -373,6 +379,7 @@ public class RocksDatagen {
 		}
 
 		public static final TagKey<Biome> IS_DARK_FOREST = create(new ResourceLocation("forge", "is_dark_forest"));
+		public static final TagKey<Biome> IS_MANGROVE_SWAMP = create(new ResourceLocation("forge", "is_mangrove_swamp"));
 
 		private static TagKey<Biome> create(ResourceLocation location) {
 			return TagKey.create(Registries.BIOME, location);
@@ -381,6 +388,7 @@ public class RocksDatagen {
 		@Override
 		protected void addTags(HolderLookup.Provider provider) {
 			this.tag(IS_DARK_FOREST).add(Biomes.DARK_FOREST);
+			this.tag(IS_MANGROVE_SWAMP).add(Biomes.MANGROVE_SWAMP);
 		}
 	}
 }

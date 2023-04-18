@@ -37,6 +37,7 @@ public class StickFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> ACACIA_STICK_FEATURE = FeatureUtils.createKey("rocks:acacia_stick");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_STICK_FEATURE = FeatureUtils.createKey("rocks:jungle_stick");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> DARK_OAK_STICK_FEATURE = FeatureUtils.createKey("rocks:dark_oak_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> MANGROVE_STICK_FEATURE = FeatureUtils.createKey("rocks:mangrove_stick");
 
 	public static void configuredBootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
 		FeatureUtils.register(context, OAK_STICK_FEATURE,
@@ -92,6 +93,14 @@ public class StickFeatures {
 								.add(RocksRegistry.DARK_OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
 								.add(RocksRegistry.DARK_OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
 						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
+
+		FeatureUtils.register(context, MANGROVE_STICK_FEATURE,
+				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
+						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
+								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
+								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
+						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
 	}
 
 	public static final ResourceKey<PlacedFeature> PLACED_OAK_STICK_FEATURE = PlacementUtils.createKey("rocks:oak_stick");
@@ -101,6 +110,7 @@ public class StickFeatures {
 	public static final ResourceKey<PlacedFeature> PLACED_ACACIA_STICK_FEATURE = PlacementUtils.createKey("rocks:acacia_stick");
 	public static final ResourceKey<PlacedFeature> PLACED_JUNGLE_STICK_FEATURE = PlacementUtils.createKey("rocks:jungle_stick");
 	public static final ResourceKey<PlacedFeature> PLACED_DARK_OAK_STICK_FEATURE = PlacementUtils.createKey("rocks:dark_oak_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_MANGROVE_STICK_FEATURE = PlacementUtils.createKey("rocks:mangrove_stick");
 
 	public static void placedBootstrap(BootstapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -115,5 +125,6 @@ public class StickFeatures {
 		PlacementUtils.register(context, PLACED_ACACIA_STICK_FEATURE, holdergetter.getOrThrow(ACACIA_STICK_FEATURE), stickModifiers);
 		PlacementUtils.register(context, PLACED_JUNGLE_STICK_FEATURE, holdergetter.getOrThrow(JUNGLE_STICK_FEATURE), stickModifiers);
 		PlacementUtils.register(context, PLACED_DARK_OAK_STICK_FEATURE, holdergetter.getOrThrow(DARK_OAK_STICK_FEATURE), stickModifiers);
+		PlacementUtils.register(context, PLACED_MANGROVE_STICK_FEATURE, holdergetter.getOrThrow(MANGROVE_STICK_FEATURE), stickModifiers);
 	}
 }

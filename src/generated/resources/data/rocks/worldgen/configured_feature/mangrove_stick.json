@@ -10,7 +10,7 @@
             "entries": [
               {
                 "data": {
-                  "Name": "rocks:jungle_stick",
+                  "Name": "rocks:mangrove_stick",
                   "Properties": {
                     "variation": "small",
                     "waterlogged": "false"
@@ -20,7 +20,7 @@
               },
               {
                 "data": {
-                  "Name": "rocks:jungle_stick",
+                  "Name": "rocks:mangrove_stick",
                   "Properties": {
                     "variation": "medium",
                     "waterlogged": "false"
@@ -30,7 +30,7 @@
               },
               {
                 "data": {
-                  "Name": "rocks:jungle_stick",
+                  "Name": "rocks:mangrove_stick",
                   "Properties": {
                     "variation": "large",
                     "waterlogged": "false"

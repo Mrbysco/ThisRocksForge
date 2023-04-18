@@ -5,7 +5,6 @@ import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.RockVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -146,7 +145,11 @@ public class RockFeatures {
 		PlacementUtils.register(context, PLACED_DIORITE_ROCK_FEATURE, holdergetter.getOrThrow(DIORITE_ROCK_FEATURE), rockModifiers);
 		PlacementUtils.register(context, PLACED_ANDESITE_ROCK_FEATURE, holdergetter.getOrThrow(ANDESITE_ROCK_FEATURE), rockModifiers);
 		PlacementUtils.register(context, PLACED_SAND_ROCK_FEATURE, holdergetter.getOrThrow(SAND_ROCK_FEATURE), rockModifiers);
-		PlacementUtils.register(context, PLACED_RED_SAND_ROCK_FEATURE, holdergetter.getOrThrow(RED_SAND_ROCK_FEATURE), rockModifiers);
+
+		List<PlacementModifier> redSandModifiers = new ArrayList<>(RockFeatures.rockModifiers);
+		rockModifiers.add(CountPlacement.of(7));
+		PlacementUtils.register(context, PLACED_RED_SAND_ROCK_FEATURE, holdergetter.getOrThrow(RED_SAND_ROCK_FEATURE), redSandModifiers);
+
 		PlacementUtils.register(context, PLACED_END_STONE_ROCK_FEATURE, holdergetter.getOrThrow(END_STONE_ROCK_FEATURE), rockModifiers);
 		PlacementUtils.register(context, PLACED_GRAVEL_ROCK_FEATURE, holdergetter.getOrThrow(GRAVEL_ROCK_FEATURE), rockModifiers);
 

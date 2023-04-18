@@ -1,5 +1,5 @@
 {
-  "feature": "rocks:red_sand_rock",
+  "feature": "rocks:mangrove_stick",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
@@ -17,7 +17,7 @@
     },
     {
       "type": "minecraft:count",
-      "count": 7
+      "count": 3
     }
   ]
 }

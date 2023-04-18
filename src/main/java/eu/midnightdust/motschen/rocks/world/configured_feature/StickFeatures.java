@@ -72,6 +72,13 @@ public class StickFeatures {
 							.add(RocksRegistry.DARK_OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
 							.add(RocksRegistry.DARK_OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
 					BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
+	public static final Holder<ConfiguredFeature<RandomPatchConfiguration, ?>> MANGROVE_STICK_FEATURE = FeatureUtils.register(new ResourceLocation(Rocks.MOD_ID, "mangrove_stick").toString(),
+			Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
+					new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+							.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
+							.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
+							.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
+					BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
 
 	public static void init() {
 		//Just here to load the class

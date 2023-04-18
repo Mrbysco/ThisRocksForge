@@ -125,7 +125,11 @@ public class RocksDatagen {
 		map.putAll(generateConfiguredFeature(ops, RockFeatures.DIORITE_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
 		map.putAll(generateConfiguredFeature(ops, RockFeatures.ANDESITE_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
 		map.putAll(generateConfiguredFeature(ops, RockFeatures.SAND_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
-		map.putAll(generateConfiguredFeature(ops, RockFeatures.RED_SAND_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
+
+		List<PlacementModifier> redSandModifier = new ArrayList<>(RockFeatures.rockModifiers);
+		redSandModifier.add(CountPlacement.of(7));
+		map.putAll(generateConfiguredFeature(ops, RockFeatures.RED_SAND_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), redSandModifier));
+
 		map.putAll(generateConfiguredFeature(ops, RockFeatures.END_STONE_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
 		map.putAll(generateConfiguredFeature(ops, RockFeatures.GRAVEL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), rockModifiers));
 
@@ -138,6 +142,7 @@ public class RocksDatagen {
 		map.putAll(generateConfiguredFeature(ops, StickFeatures.ACACIA_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
 		map.putAll(generateConfiguredFeature(ops, StickFeatures.JUNGLE_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
 		map.putAll(generateConfiguredFeature(ops, StickFeatures.DARK_OAK_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
+		map.putAll(generateConfiguredFeature(ops, StickFeatures.MANGROVE_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), stickModifiers));
 
 		return map;
 	}
@@ -177,6 +182,7 @@ public class RocksDatagen {
 		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "jungle_stick"), List.of(BiomeTags.IS_JUNGLE), List.of(), Decoration.TOP_LAYER_MODIFICATION));
 
 		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "dark_oak_stick"), List.of(RocksBiomeTags.IS_DARK_FOREST), List.of(), Decoration.TOP_LAYER_MODIFICATION));
+		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "mangrove_stick"), List.of(RocksBiomeTags.IS_MANGROVE_SWAMP), List.of(), Decoration.TOP_LAYER_MODIFICATION));
 
 		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "seashell"), List.of(BiomeTags.IS_BEACH), List.of(Tags.Biomes.IS_SNOWY), Decoration.TOP_LAYER_MODIFICATION));
 		map.putAll(generateBiomeModifier(ops, new ResourceLocation(Rocks.MOD_ID, "starfish"), List.of(BiomeTags.IS_BEACH), List.of(Tags.Biomes.IS_SNOWY), Decoration.TOP_LAYER_MODIFICATION));
@@ -229,6 +235,7 @@ public class RocksDatagen {
 				this.dropOther(RocksRegistry.DARK_OAK_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.JUNGLE_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.OAK_STICK.get(), Items.STICK);
+				this.dropOther(RocksRegistry.MANGROVE_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.SPRUCE_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.WARPED_STICK.get(), Items.STICK);
 
@@ -309,6 +316,7 @@ public class RocksDatagen {
 		}
 
 		public static final TagKey<Biome> IS_DARK_FOREST = create(new ResourceLocation("forge", "is_dark_forest"));
+		public static final TagKey<Biome> IS_MANGROVE_SWAMP = create(new ResourceLocation("forge", "is_mangrove_swamp"));
 
 		private static TagKey<Biome> create(ResourceLocation location) {
 			return TagKey.create(Registry.BIOME_REGISTRY, location);
@@ -317,6 +325,7 @@ public class RocksDatagen {
 		@Override
 		protected void addTags() {
 			this.tag(IS_DARK_FOREST).add(Biomes.DARK_FOREST);
+			this.tag(IS_MANGROVE_SWAMP).add(Biomes.MANGROVE_SWAMP);
 		}
 	}
 }

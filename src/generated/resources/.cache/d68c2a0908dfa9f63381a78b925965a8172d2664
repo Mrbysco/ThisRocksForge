@@ -1,4 +1,4 @@
-// 1.19.2	2022-12-20T22:11:57.4814687	forge/biome_modifier generator for rocks
+// 1.19.2	2023-04-18T21:56:19.7894136	forge/biome_modifier generator for rocks
 499a1ea7338747d3f9efd8aca935d094c9f2befd data/rocks/forge/biome_modifier/acacia_stick.json
 ae9c22142f1517e39ae79d24ea0e4d6f834e2059 data/rocks/forge/biome_modifier/andesite_rock.json
 2299971cf5edd9976d5a1c9eea34f57b4029c7e9 data/rocks/forge/biome_modifier/birch_stick.json
@@ -9,6 +9,7 @@ c751c55d6b49d5424ad769e70a001dd2b5b9543f data/rocks/forge/biome_modifier/diorite
 3794a594af9a58c774d7e2c2ff7655a1052b145c data/rocks/forge/biome_modifier/granite_rock.json
 36024d5d7795ce817697d5cc10a54acadd003a53 data/rocks/forge/biome_modifier/gravel_rock.json
 1fca0b0745dc7376ba015c9d2c8c226dec6eea9f data/rocks/forge/biome_modifier/jungle_stick.json
+b6b51d88bb21b0b980854662eb5d4dc73d690961 data/rocks/forge/biome_modifier/mangrove_stick.json
 75c37a6c21b3fc7901aa19971b693bb8e0192bad data/rocks/forge/biome_modifier/netherrack_rock.json
 dbf13acd951504f611516aae2716d68ca393abd1 data/rocks/forge/biome_modifier/nether_geyser.json
 6bdfdc0b9fcd330471d1eb469db492d56347eaf5 data/rocks/forge/biome_modifier/nether_gravel_rock.json

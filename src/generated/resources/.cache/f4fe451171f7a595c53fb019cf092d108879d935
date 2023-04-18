@@ -1,4 +1,4 @@
-// 1.19.2	2022-12-20T22:11:57.4804679	worldgen/placed_feature generator for rocks
+// 1.19.2	2023-04-18T21:57:10.4714751	worldgen/placed_feature generator for rocks
 50b6f4977b09921b5ccb8218fdaa93aea0922442 data/rocks/worldgen/placed_feature/acacia_stick.json
 7b28f598a7d59bdc77517a092069a98c9b87c77a data/rocks/worldgen/placed_feature/andesite_rock.json
 bb14aba373484ed195ee8298f1f683215f32bf4b data/rocks/worldgen/placed_feature/birch_stick.json
@@ -9,12 +9,13 @@ bb14aba373484ed195ee8298f1f683215f32bf4b data/rocks/worldgen/placed_feature/birc
 226432bf76dda5e1082891057d56f1620a2a5d28 data/rocks/worldgen/placed_feature/granite_rock.json
 899f87b403409deabe5089d1f6d57bb263c3ad99 data/rocks/worldgen/placed_feature/gravel_rock.json
 c3289b5cb431958a8edd604947d10a35616b9c45 data/rocks/worldgen/placed_feature/jungle_stick.json
+1c2d1614fcf17e71b090f9460d2f20c48e6d5b24 data/rocks/worldgen/placed_feature/mangrove_stick.json
 32bf8348dc186a727da881331cdb0c46b2dde424 data/rocks/worldgen/placed_feature/netherrack_rock.json
 664c4707431a3a3b23878b7da0254ec8edcfc845 data/rocks/worldgen/placed_feature/nether_geyser.json
 f6d4005f759ed83051fe0a71817a495f006c4a66 data/rocks/worldgen/placed_feature/nether_gravel_rock.json
 5606a86695c0b229dbb7d943ed296ab9da662351 data/rocks/worldgen/placed_feature/oak_stick.json
 34b96336c5e45f559dd5ecba1fc185e229761cd5 data/rocks/worldgen/placed_feature/pinecone.json
-37a4d29eb0a2146820b019998cd9a2d2b17e60ea data/rocks/worldgen/placed_feature/red_sand_rock.json
+ab315d79a3fa81baafb3819327119ee0563ed1b2 data/rocks/worldgen/placed_feature/red_sand_rock.json
 2f7c2962a2cd1bcbbb0416302f39869dc8edd8ec data/rocks/worldgen/placed_feature/rock.json
 b67ad85d5fe01fc35ef4fd209942c974e675ca0f data/rocks/worldgen/placed_feature/sand_rock.json
 91257db19240d85740452cb5396dc01a9008f685 data/rocks/worldgen/placed_feature/seashell.json

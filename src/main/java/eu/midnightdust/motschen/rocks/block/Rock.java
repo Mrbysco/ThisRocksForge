@@ -14,9 +14,12 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -24,20 +27,21 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
 
-public class Rock extends Block {
+public class Rock extends Block implements SimpleWaterloggedBlock {
 
 	private static final VoxelShape SHAPE;
 	private static final EnumProperty<RockVariation> ROCK_VARIATION = Rocks.ROCK_VARIATION;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public Rock() {
 		super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
-		this.registerDefaultState(this.stateDefinition.any().setValue(ROCK_VARIATION, RockVariation.TINY));
+		this.registerDefaultState(this.stateDefinition.any().setValue(ROCK_VARIATION, RockVariation.TINY).setValue(WATERLOGGED, Boolean.valueOf(false)));
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
 		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-				.setValue(ROCK_VARIATION, RockVariation.TINY);
+				.setValue(ROCK_VARIATION, RockVariation.TINY).setValue(WATERLOGGED, Boolean.valueOf(false));
 	}
 
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
@@ -60,7 +64,7 @@ public class Rock extends Block {
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(ROCK_VARIATION);
+		builder.add(ROCK_VARIATION, WATERLOGGED);
 	}
 
 	@Override

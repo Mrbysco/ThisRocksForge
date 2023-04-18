@@ -1,6 +1,7 @@
 package eu.midnightdust.motschen.rocks.block.blockentity;
 
 import eu.midnightdust.motschen.rocks.block.OverworldGeyser;
+import eu.midnightdust.motschen.rocks.config.RocksConfig;
 import eu.midnightdust.motschen.rocks.registry.RocksBlockEntities;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import net.minecraft.core.BlockPos;
@@ -25,7 +26,7 @@ public class OverworldGeyserBlockEntity extends BlockEntity {
 			Player player = world.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3, true);
 			Player player2 = world.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 8, true);
 
-			if (player2 != null &&
+			if (RocksConfig.COMMON.geyserLevitation.get() && player2 != null &&
 					player2.getY() >= pos.getY() && player2.getY() <= pos.getY() + 5 &&
 					(pos.getX() <= player2.getX() && pos.getX() + 1 >= player2.getX()) &&
 					(pos.getZ() <= player2.getZ() && pos.getZ() + 1 >= player2.getZ())) {

@@ -1,8 +1,6 @@
 package eu.midnightdust.motschen.rocks.datagen;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.serialization.JsonOps;
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.StarfishVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
@@ -31,7 +29,6 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
@@ -73,8 +70,6 @@ import java.util.function.Consumer;
 public class RocksDatagen {
 	@SubscribeEvent
 	public static void gatherData(GatherDataEvent event) {
-		HolderLookup.Provider provider = getProvider();
-		final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, provider);
 		DataGenerator generator = event.getGenerator();
 		PackOutput packOutput = generator.getPackOutput();
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();

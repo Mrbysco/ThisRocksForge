@@ -28,9 +28,9 @@ public class NetherGeyserBlockEntity extends BlockEntity {
 			if (player != null) {
 				world.setBlockAndUpdate(pos, state.setValue(NetherGeyser.ACTIVE, true));
 
-				player.hurt(DamageSource.ON_FIRE, 1);
+				player.hurt(player.damageSources().onFire(), 1);
 				if (player2 != null) {
-					player2.hurt(DamageSource.ON_FIRE, 4);
+					player2.hurt(player.damageSources().onFire(), 4);
 				}
 				blockEntity.countdown = 1000;
 			} else {

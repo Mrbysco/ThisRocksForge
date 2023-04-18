@@ -62,7 +62,7 @@ public class Rocks {
 		ROCKS_GROUP = event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "tab"), builder ->
 				builder.icon(() -> new ItemStack(RocksRegistry.ROCK.get()))
 						.title(Component.translatable("itemGroup.rocks"))
-						.displayItems((features, output, hasPermissions) -> {
+						.displayItems((displayParameters, output) -> {
 							List<ItemStack> stacks = RocksRegistry.ITEMS.getEntries().stream().map(reg -> new ItemStack(reg.get())).toList();
 							output.acceptAll(stacks);
 						}));

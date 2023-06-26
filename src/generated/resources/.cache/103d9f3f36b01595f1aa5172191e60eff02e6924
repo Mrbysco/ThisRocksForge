@@ -1,7 +1,9 @@
-// 1.19.4	2023-04-18T21:29:20.3269087	Registries
+// 1.20.1	2023-06-27T00:43:15.2742538	Registries
 499a1ea7338747d3f9efd8aca935d094c9f2befd data/rocks/forge/biome_modifier/acacia_stick.json
 ae9c22142f1517e39ae79d24ea0e4d6f834e2059 data/rocks/forge/biome_modifier/andesite_rock.json
+f15678ee829f206e3c98c50c015b94b1c8a2e4d9 data/rocks/forge/biome_modifier/bamboo_stick.json
 2299971cf5edd9976d5a1c9eea34f57b4029c7e9 data/rocks/forge/biome_modifier/birch_stick.json
+220184e13b125479881cb9851f404b33709e561e data/rocks/forge/biome_modifier/cherry_stick.json
 2bced2c8ad5ea282e8c56651883c20b2278974d1 data/rocks/forge/biome_modifier/crimson_stick.json
 184aeedd13f4ca8991056f937993ec8383db9443 data/rocks/forge/biome_modifier/dark_oak_stick.json
 c751c55d6b49d5424ad769e70a001dd2b5b9543f data/rocks/forge/biome_modifier/diorite_rock.json
@@ -29,7 +31,9 @@ c7975cf3a6cda1b76a4e07dc54ed6eef74f7bd88 data/rocks/forge/biome_modifier/starfis
 54e51351be9a30a3bb9a4a81f92d2f824367b6e2 data/rocks/forge/biome_modifier/warped_stick.json
 c8fde0dbd70eb465124a3cd633aabe894a6190bc data/rocks/worldgen/configured_feature/acacia_stick.json
 615e0747439a1f98ae0ddee3991884e7f81eaeb5 data/rocks/worldgen/configured_feature/andesite_rock.json
+a254273498f7b0bfa4c2a0ecca71c369dd0ea9e3 data/rocks/worldgen/configured_feature/bamboo_stick.json
 362bd347eae4395e581978349b38358029505cac data/rocks/worldgen/configured_feature/birch_stick.json
+68f3287e8edf62b81180d6416b16f0e69957dabf data/rocks/worldgen/configured_feature/cherry_stick.json
 939e97c643842e0f11425170083452aef6474253 data/rocks/worldgen/configured_feature/crimson_stick.json
 fa612c9c696299955d411a403a43340197cd7291 data/rocks/worldgen/configured_feature/dark_oak_stick.json
 a03eb70928df50825df9e92f2091824c56eed878 data/rocks/worldgen/configured_feature/diorite_rock.json
@@ -56,7 +60,9 @@ b9926dda2d2601a5f18c0487900d9e36d88cd5dc data/rocks/worldgen/configured_feature/
 74ed150712e0836feecba4be94e86cac461b731a data/rocks/worldgen/configured_feature/warped_stick.json
 50b6f4977b09921b5ccb8218fdaa93aea0922442 data/rocks/worldgen/placed_feature/acacia_stick.json
 7b28f598a7d59bdc77517a092069a98c9b87c77a data/rocks/worldgen/placed_feature/andesite_rock.json
+b8be049703d5ff9375ca183bfc38b5e82155eaed data/rocks/worldgen/placed_feature/bamboo_stick.json
 bb14aba373484ed195ee8298f1f683215f32bf4b data/rocks/worldgen/placed_feature/birch_stick.json
+176ba3af73806cc889f40637b225248a4f52384c data/rocks/worldgen/placed_feature/cherry_stick.json
 779f47b7423d40b589e833f89073f27c90844f63 data/rocks/worldgen/placed_feature/crimson_stick.json
 5aea7257d584994fb9dcf4d817fdd1d81bcb81d5 data/rocks/worldgen/placed_feature/dark_oak_stick.json
 1eb75e8807e5631050e728e5dbad9a8f61d90bb6 data/rocks/worldgen/placed_feature/diorite_rock.json

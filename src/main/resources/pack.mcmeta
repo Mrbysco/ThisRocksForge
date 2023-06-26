@@ -1,8 +1,8 @@
 {
-    "pack": {
-        "description": "This Rocks Forge resources",
-        "pack_format": 13,
-        "forge:client_resources_pack_format": 13,
-        "forge:server_data_pack_format": 12
-    }
+  "pack": {
+    "description": {
+      "text": "This Rocks Forge resources"
+    },
+    "pack_format": 15
+  }
 }

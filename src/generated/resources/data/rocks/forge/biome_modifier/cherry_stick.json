@@ -1,0 +1,9 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [],
+  "features": "rocks:cherry_stick",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#forge:is_cherry_grove"
+  ]
+}

@@ -38,6 +38,8 @@ public class StickFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_STICK_FEATURE = FeatureUtils.createKey("rocks:jungle_stick");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> DARK_OAK_STICK_FEATURE = FeatureUtils.createKey("rocks:dark_oak_stick");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> MANGROVE_STICK_FEATURE = FeatureUtils.createKey("rocks:mangrove_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CHERRY_STICK_FEATURE = FeatureUtils.createKey("rocks:cherry_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> BAMBOO_STICK_FEATURE = FeatureUtils.createKey("rocks:bamboo_stick");
 
 	public static void configuredBootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
 		FeatureUtils.register(context, OAK_STICK_FEATURE,
@@ -101,6 +103,22 @@ public class StickFeatures {
 								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
 								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
 						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
+
+		FeatureUtils.register(context, CHERRY_STICK_FEATURE,
+				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
+						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+								.add(RocksRegistry.CHERRY_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
+								.add(RocksRegistry.CHERRY_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
+								.add(RocksRegistry.CHERRY_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
+						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
+
+		FeatureUtils.register(context, BAMBOO_STICK_FEATURE,
+				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
+						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+								.add(RocksRegistry.BAMBOO_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
+								.add(RocksRegistry.BAMBOO_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
+								.add(RocksRegistry.BAMBOO_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
+						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
 	}
 
 	public static final ResourceKey<PlacedFeature> PLACED_OAK_STICK_FEATURE = PlacementUtils.createKey("rocks:oak_stick");
@@ -111,6 +129,8 @@ public class StickFeatures {
 	public static final ResourceKey<PlacedFeature> PLACED_JUNGLE_STICK_FEATURE = PlacementUtils.createKey("rocks:jungle_stick");
 	public static final ResourceKey<PlacedFeature> PLACED_DARK_OAK_STICK_FEATURE = PlacementUtils.createKey("rocks:dark_oak_stick");
 	public static final ResourceKey<PlacedFeature> PLACED_MANGROVE_STICK_FEATURE = PlacementUtils.createKey("rocks:mangrove_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_CHERRY_STICK_FEATURE = PlacementUtils.createKey("rocks:cherry_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_BAMBOO_STICK_FEATURE = PlacementUtils.createKey("rocks:bamboo_stick");
 
 	public static void placedBootstrap(BootstapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -126,5 +146,10 @@ public class StickFeatures {
 		PlacementUtils.register(context, PLACED_JUNGLE_STICK_FEATURE, holdergetter.getOrThrow(JUNGLE_STICK_FEATURE), stickModifiers);
 		PlacementUtils.register(context, PLACED_DARK_OAK_STICK_FEATURE, holdergetter.getOrThrow(DARK_OAK_STICK_FEATURE), stickModifiers);
 		PlacementUtils.register(context, PLACED_MANGROVE_STICK_FEATURE, holdergetter.getOrThrow(MANGROVE_STICK_FEATURE), stickModifiers);
+		PlacementUtils.register(context, PLACED_BAMBOO_STICK_FEATURE, holdergetter.getOrThrow(BAMBOO_STICK_FEATURE), stickModifiers);
+
+		List<PlacementModifier> cherryStickModifiers = new ArrayList<>(StickFeatures.stickModifiers);
+		cherryStickModifiers.add(CountPlacement.of(5)); //More tries to make up for the flowers that spawn in the Cherry Grove
+		PlacementUtils.register(context, PLACED_CHERRY_STICK_FEATURE, holdergetter.getOrThrow(CHERRY_STICK_FEATURE), cherryStickModifiers);
 	}
 }

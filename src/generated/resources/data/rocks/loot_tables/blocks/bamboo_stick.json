@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "rocks:diorite_splitter"
+          "name": "minecraft:bamboo"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "rocks:blocks/diorite_rock"
+  "random_sequence": "rocks:blocks/bamboo_stick"
 }

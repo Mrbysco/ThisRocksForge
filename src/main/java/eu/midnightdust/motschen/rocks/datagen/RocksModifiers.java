@@ -38,6 +38,10 @@ public class RocksModifiers {
 			new ResourceLocation(Rocks.MOD_ID, "dark_oak_stick"));
 	protected static final ResourceKey<BiomeModifier> MANGROVE_STICK_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
 			new ResourceLocation(Rocks.MOD_ID, "mangrove_stick"));
+	protected static final ResourceKey<BiomeModifier> CHERRY_STICK_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+			new ResourceLocation(Rocks.MOD_ID, "cherry_stick"));
+	protected static final ResourceKey<BiomeModifier> BAMBOO_STICK_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+			new ResourceLocation(Rocks.MOD_ID, "bamboo_stick"));
 
 	protected static final ResourceKey<BiomeModifier> SEASHELL_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
 			new ResourceLocation(Rocks.MOD_ID, "seashell"));

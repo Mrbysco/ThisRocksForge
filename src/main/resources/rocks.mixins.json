@@ -6,9 +6,9 @@
   "refmap": "rocks.refmap.json",
   "target": "@env(DEFAULT)",
   "client": [
-	"MixinModelElementDeserializer"
+    "MixinModelElementDeserializer"
   ],
   "injectors": {
-	"defaultRequire": 1
+    "defaultRequire": 1
   }
 }

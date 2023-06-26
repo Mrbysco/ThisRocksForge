@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
@@ -175,6 +174,11 @@ public class RocksDatagen {
 					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_JUNGLE_STICK_FEATURE)),
 					Decoration.TOP_LAYER_MODIFICATION
 			));
+			context.register(RocksModifiers.BAMBOO_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(BiomeTags.IS_JUNGLE)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_BAMBOO_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
 			context.register(RocksModifiers.DARK_OAK_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
 					List.of(biomeGetter.getOrThrow(RocksBiomeTags.IS_DARK_FOREST)),
 					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_DARK_OAK_STICK_FEATURE)),
@@ -183,6 +187,11 @@ public class RocksDatagen {
 			context.register(RocksModifiers.MANGROVE_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
 					List.of(biomeGetter.getOrThrow(RocksBiomeTags.IS_MANGROVE_SWAMP)),
 					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_MANGROVE_STICK_FEATURE)),
+					Decoration.TOP_LAYER_MODIFICATION
+			));
+			context.register(RocksModifiers.CHERRY_STICK_MODIFIER, new AddFeaturesBlacklistBiomeModifier(
+					List.of(biomeGetter.getOrThrow(RocksBiomeTags.IS_CHERRY_GROVE)),
+					List.of(), HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(StickFeatures.PLACED_CHERRY_STICK_FEATURE)),
 					Decoration.TOP_LAYER_MODIFICATION
 			));
 
@@ -294,6 +303,7 @@ public class RocksDatagen {
 			protected void generate() {
 				this.dropOther(RocksRegistry.ACACIA_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.BIRCH_STICK.get(), Items.STICK);
+				this.dropOther(RocksRegistry.CHERRY_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.CRIMSON_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.DARK_OAK_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.JUNGLE_STICK.get(), Items.STICK);
@@ -301,6 +311,7 @@ public class RocksDatagen {
 				this.dropOther(RocksRegistry.OAK_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.SPRUCE_STICK.get(), Items.STICK);
 				this.dropOther(RocksRegistry.WARPED_STICK.get(), Items.STICK);
+				this.dropOther(RocksRegistry.BAMBOO_STICK.get(), Items.BAMBOO);
 
 				this.dropOther(RocksRegistry.PINECONE.get(), Items.SPRUCE_SAPLING);
 				this.add(RocksRegistry.SEASHELL.get(), createSeashellDrop(RocksRegistry.SEASHELL.get()));
@@ -344,7 +355,7 @@ public class RocksDatagen {
 
 		@Override
 		protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationContext) {
-			map.forEach((name, table) -> LootTables.validate(validationContext, name, table));
+			map.forEach((name, table) -> table.validate(validationContext));
 		}
 	}
 
@@ -380,6 +391,7 @@ public class RocksDatagen {
 
 		public static final TagKey<Biome> IS_DARK_FOREST = create(new ResourceLocation("forge", "is_dark_forest"));
 		public static final TagKey<Biome> IS_MANGROVE_SWAMP = create(new ResourceLocation("forge", "is_mangrove_swamp"));
+		public static final TagKey<Biome> IS_CHERRY_GROVE = create(new ResourceLocation("forge", "is_cherry_grove"));
 
 		private static TagKey<Biome> create(ResourceLocation location) {
 			return TagKey.create(Registries.BIOME, location);
@@ -389,6 +401,7 @@ public class RocksDatagen {
 		protected void addTags(HolderLookup.Provider provider) {
 			this.tag(IS_DARK_FOREST).add(Biomes.DARK_FOREST);
 			this.tag(IS_MANGROVE_SWAMP).add(Biomes.MANGROVE_SWAMP);
+			this.tag(IS_CHERRY_GROVE).add(Biomes.CHERRY_GROVE);
 		}
 	}
 }

@@ -1,1 +1,2 @@
-* Initial update to 1.19.4
+* Initial update to 1.20
+* Add Cherry and Bamboo sticks to their respective biomes

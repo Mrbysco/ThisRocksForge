@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[45,)"
+loaderVersion="[46,)"
 issueTrackerURL="https://github.com/Mrbysco/ThisRocksForge/issues"
 license="MIT"
 
@@ -16,6 +16,6 @@ Adds little rocks, sticks, pinecones, seashells and starfish to your world to ma
 [[dependencies.rocks]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.19.4,1.20)"
+versionRange="[1.20,1.21)"
 ordering="NONE"
 side="BOTH"

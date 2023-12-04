@@ -23,7 +23,7 @@ public class OverworldGeyserBlockEntity extends BlockEntity {
 
 	public static void tick(Level level, BlockPos pos, BlockState state, OverworldGeyserBlockEntity blockEntity) {
 		assert level != null;
-		if (level.getBlockState(pos).getBlock() == RocksRegistry.GEYSER.get()) {
+		if (level.getBlockState(pos).is(RocksRegistry.GEYSER.get())) {
 			Player player = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3, true);
 			Player player2 = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 8, true);
 

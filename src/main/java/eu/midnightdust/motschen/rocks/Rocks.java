@@ -12,13 +12,12 @@ import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import eu.midnightdust.motschen.rocks.world.FeatureRegistry;
 import eu.midnightdust.motschen.rocks.world.WorldGenHandler;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
 @Mod(Rocks.MOD_ID)
@@ -43,8 +42,8 @@ public class Rocks {
 		FeatureRegistry.FEATURES.register(eventBus);
 		WorldGenHandler.BIOME_MODIFIER_SERIALIZERS.register(eventBus);
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+		if (FMLEnvironment.dist.isClient()) {
 			eventBus.addListener(ClientHandler::onClientSetup);
-		});
+		}
 	}
 }

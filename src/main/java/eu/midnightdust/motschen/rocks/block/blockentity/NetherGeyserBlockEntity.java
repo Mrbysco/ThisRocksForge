@@ -20,7 +20,7 @@ public class NetherGeyserBlockEntity extends BlockEntity {
 
 	public static void tick(Level world, BlockPos pos, BlockState state, NetherGeyserBlockEntity blockEntity) {
 		assert world != null;
-		if (world.getBlockState(pos).getBlock() == RocksRegistry.NETHER_GEYSER.get()) {
+		if (world.getBlockState(pos).is(RocksRegistry.NETHER_GEYSER.get())) {
 			Player player = world.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3, true);
 			Player player2 = world.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1, true);
 

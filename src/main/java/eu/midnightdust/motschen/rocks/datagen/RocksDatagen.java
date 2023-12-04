@@ -24,6 +24,7 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.registries.VanillaRegistries;
@@ -49,21 +50,19 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RocksDatagen {
@@ -76,7 +75,7 @@ public class RocksDatagen {
 
 		if (event.includeServer()) {
 			generator.addProvider(event.includeServer(), new Loots(packOutput));
-			generator.addProvider(event.includeServer(), new Recipes(packOutput));
+			generator.addProvider(event.includeServer(), new Recipes(packOutput, lookupProvider));
 			generator.addProvider(event.includeServer(), new RocksBiomeTags(packOutput, lookupProvider, helper));
 
 			generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(
@@ -98,7 +97,7 @@ public class RocksDatagen {
 			RockFeatures.placedBootstrap(context);
 			StickFeatures.placedBootstrap(context);
 		});
-		registryBuilder.add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+		registryBuilder.add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
 			HolderGetter<Biome> biomeGetter = context.lookup(Registries.BIOME);
 			List<HolderSet<Biome>> overworld = List.of(biomeGetter.getOrThrow(BiomeTags.IS_OVERWORLD));
 
@@ -349,7 +348,7 @@ public class RocksDatagen {
 
 			@Override
 			protected Iterable<Block> getKnownBlocks() {
-				return (Iterable<Block>) RocksRegistry.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+				return (Iterable<Block>) RocksRegistry.BLOCKS.getEntries().stream().map(holder -> (Block) holder.get())::iterator;
 			}
 		}
 
@@ -360,21 +359,21 @@ public class RocksDatagen {
 	}
 
 	public static class Recipes extends RecipeProvider {
-		public Recipes(PackOutput packOutput) {
-			super(packOutput);
+		public Recipes(PackOutput packOutput, CompletableFuture<net.minecraft.core.HolderLookup.Provider> lookupProvider) {
+			super(packOutput, lookupProvider);
 		}
 
 		@Override
-		protected void buildRecipes(Consumer<FinishedRecipe> recipeConsumer) {
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.ANDESITE).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "andesite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.COBBLESTONE).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "cobblestone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIORITE).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "diorite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.END_STONE).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "end_stone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.GRANITE).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "granite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.NETHERRACK).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "netherrack_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.RED_SANDSTONE).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "red_sandstone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SANDSTONE).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "sandstone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SOUL_SOIL).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeConsumer, new ResourceLocation(Rocks.MOD_ID, "soul_soil_from_splitter"));
+		protected void buildRecipes(RecipeOutput recipeOutput) {
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.ANDESITE).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "andesite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.COBBLESTONE).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "cobblestone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIORITE).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "diorite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.END_STONE).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "end_stone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.GRANITE).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "granite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.NETHERRACK).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "netherrack_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.RED_SANDSTONE).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "red_sandstone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SANDSTONE).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "sandstone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SOUL_SOIL).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "soul_soil_from_splitter"));
 		}
 
 		@Override

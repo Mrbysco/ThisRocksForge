@@ -34,7 +34,7 @@ public class Rock extends Block implements SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public Rock() {
-		super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
+		super(Properties.ofFullCopy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
 		this.registerDefaultState(this.stateDefinition.any().setValue(ROCK_VARIATION, RockVariation.TINY).setValue(WATERLOGGED, false));
 	}
 

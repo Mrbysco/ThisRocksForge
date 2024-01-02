@@ -1,5 +1,6 @@
 package eu.midnightdust.motschen.rocks.block;
 
+import com.mojang.serialization.MapCodec;
 import eu.midnightdust.motschen.rocks.block.blockentity.OverworldGeyserBlockEntity;
 import eu.midnightdust.motschen.rocks.registry.RocksBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -29,15 +30,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class OverworldGeyser extends BaseEntityBlock implements EntityBlock {
+	public static final MapCodec<OverworldGeyser> CODEC = simpleCodec(OverworldGeyser::new);
 
 	private static final VoxelShape SHAPE;
 	private static final VoxelShape SNOWY_SHAPE;
 	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 	public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
-	public OverworldGeyser() {
-		super(Properties.copy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
+	public OverworldGeyser(Properties properties) {
+		super(Properties.ofFullCopy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
 		this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false).setValue(SNOWY, false));
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package eu.midnightdust.motschen.rocks.block;
 
+import com.mojang.serialization.MapCodec;
 import eu.midnightdust.motschen.rocks.block.blockentity.NetherGeyserBlockEntity;
 import eu.midnightdust.motschen.rocks.registry.RocksBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
@@ -27,13 +27,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class NetherGeyser extends BaseEntityBlock implements EntityBlock {
+	public static final MapCodec<NetherGeyser> CODEC = simpleCodec(NetherGeyser::new);
 
 	private static final VoxelShape SHAPE;
 	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
-	public NetherGeyser() {
-		super(Properties.copy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
+	public NetherGeyser(Properties properties) {
+		super(properties.strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
 		this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false));
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 
 	@Override

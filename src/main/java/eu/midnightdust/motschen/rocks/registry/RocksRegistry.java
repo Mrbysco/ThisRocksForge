@@ -15,6 +15,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -54,8 +56,8 @@ public class RocksRegistry {
 	public static final DeferredBlock<Block> PINECONE = BLOCKS.register("pinecone", () -> new Pinecone());
 	public static final DeferredBlock<Block> SEASHELL = BLOCKS.register("seashell", () -> new Seashell());
 	public static final DeferredBlock<Block> STARFISH = BLOCKS.register("starfish", () -> new Starfish());
-	public static final DeferredBlock<Block> GEYSER = BLOCKS.register("geyser", () -> new OverworldGeyser());
-	public static final DeferredBlock<Block> NETHER_GEYSER = BLOCKS.register("nether_geyser", () -> new NetherGeyser());
+	public static final DeferredBlock<Block> GEYSER = BLOCKS.register("geyser", () -> new OverworldGeyser(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)));
+	public static final DeferredBlock<Block> NETHER_GEYSER = BLOCKS.register("nether_geyser", () -> new NetherGeyser(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)));
 
 	//Items
 	public static final DeferredItem<BlockItem> ROCK_ITEM = ITEMS.registerSimpleBlockItem(ROCK);

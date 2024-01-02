@@ -37,7 +37,7 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public Starfish() {
-		super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.CORAL_BLOCK));
+		super(Properties.ofFullCopy(Blocks.POPPY).noOcclusion().sound(SoundType.CORAL_BLOCK));
 		this.registerDefaultState(this.stateDefinition.any().setValue(STARFISH_VARIATION, StarfishVariation.RED).setValue(WATERLOGGED, false));
 	}
 
@@ -60,7 +60,7 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
+	public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
 		ItemStack stack = new ItemStack(this);
 		stack.getOrCreateTag().putString("variation", state.getValue(STARFISH_VARIATION).getSerializedName());
 		return stack;

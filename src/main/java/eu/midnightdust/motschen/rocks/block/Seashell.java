@@ -36,7 +36,7 @@ public class Seashell extends Block implements SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public Seashell() {
-		super(Properties.copy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
+		super(Properties.ofFullCopy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
 		this.registerDefaultState(this.stateDefinition.any().setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, false));
 	}
 

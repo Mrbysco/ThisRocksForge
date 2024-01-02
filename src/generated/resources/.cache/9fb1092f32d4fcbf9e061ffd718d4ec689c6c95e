@@ -1,4 +1,13 @@
-// 1.20.2	2023-12-04T17:15:47.8435508	Recipes
+// 1.20.4	2024-01-02T01:36:47.2210474	Recipes
+cbceb057301bc822b9bb66e5ba73cbb4250da0ad data/rocks/advancements/recipes/misc/andesite_from_splitter.json
+c6f379466449f8a82bbf80fc259003f1f75b913f data/rocks/advancements/recipes/misc/cobblestone_from_splitter.json
+615f656f5eaf46251c6220d6eeb410ee48fc9c58 data/rocks/advancements/recipes/misc/diorite_from_splitter.json
+c11dab35d85986264457676952af9e169437e76e data/rocks/advancements/recipes/misc/end_stone_from_splitter.json
+023319b97b4deb9d67704d5574412ba95bfe9c9a data/rocks/advancements/recipes/misc/granite_from_splitter.json
+2eb113e6888a4b382146c3012dcfd6202d3a9d2d data/rocks/advancements/recipes/misc/netherrack_from_splitter.json
+ef9d3b4336409cdd6d370df5d5f87dca60d48f5c data/rocks/advancements/recipes/misc/red_sandstone_from_splitter.json
+13faec0573be1e86b2b184cf58157eccaf9d3f87 data/rocks/advancements/recipes/misc/sandstone_from_splitter.json
+f8d0222229bab8b1b19b34fdd05c2ab64fe5dc27 data/rocks/advancements/recipes/misc/soul_soil_from_splitter.json
 7f1ccd8d78dca5c37f706b50bfbdca1a88e31f72 data/rocks/recipes/andesite_from_splitter.json
 e3dd5b0f79abd03ccaca9047b793da6aeb554897 data/rocks/recipes/cobblestone_from_splitter.json
 372b83f4e5ba805856905d140befda3c665ec4e7 data/rocks/recipes/diorite_from_splitter.json

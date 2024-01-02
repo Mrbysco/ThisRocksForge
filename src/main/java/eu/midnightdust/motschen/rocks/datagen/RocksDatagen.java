@@ -1,6 +1,5 @@
 package eu.midnightdust.motschen.rocks.datagen;
 
-import com.google.gson.JsonObject;
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.StarfishVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
@@ -10,6 +9,7 @@ import eu.midnightdust.motschen.rocks.world.configured_feature.RockFeatures;
 import eu.midnightdust.motschen.rocks.world.configured_feature.StickFeatures;
 import eu.midnightdust.motschen.rocks.world.modifier.AddFeaturesBlacklistBiomeModifier;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.Cloner;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -17,12 +17,10 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -83,7 +81,7 @@ public class RocksDatagen {
 		}
 	}
 
-	private static HolderLookup.Provider getProvider() {
+	private static RegistrySetBuilder.PatchedRegistries getProvider() {
 		final RegistrySetBuilder registryBuilder = new RegistrySetBuilder();
 		registryBuilder.add(Registries.CONFIGURED_FEATURE, context -> {
 			MiscFeatures.configuredBootstrap(context);
@@ -275,11 +273,13 @@ public class RocksDatagen {
 					Decoration.TOP_LAYER_MODIFICATION
 			));
 		});
-		// We need the BIOME registry to be present so we can use a biome tag, doesn't matter that it's empty
-		registryBuilder.add(Registries.BIOME, context -> {
+		// We need the BIOME registry to be present, so we can use a biome tag, doesn't matter that it's empty
+		registryBuilder.add(Registries.BIOME, $ -> {
 		});
 		RegistryAccess.Frozen regAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
-		return registryBuilder.buildPatch(regAccess, VanillaRegistries.createLookup());
+		Cloner.Factory cloner$factory = new Cloner.Factory();
+		net.neoforged.neoforge.registries.DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().forEach(data -> data.runWithArguments(cloner$factory::addCodec));
+		return registryBuilder.buildPatch(regAccess, VanillaRegistries.createLookup(), cloner$factory);
 	}
 
 
@@ -374,11 +374,6 @@ public class RocksDatagen {
 			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.RED_SANDSTONE).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "red_sandstone_from_splitter"));
 			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SANDSTONE).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "sandstone_from_splitter"));
 			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SOUL_SOIL).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "soul_soil_from_splitter"));
-		}
-
-		@Override
-		protected @Nullable CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
-			return null;
 		}
 	}
 

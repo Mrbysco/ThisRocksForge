@@ -9,10 +9,11 @@ import eu.midnightdust.motschen.rocks.world.FeatureRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,15 +36,19 @@ import java.util.List;
 
 
 public class MiscFeatures {
-	public static List<PlacementModifier> placementModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+	public static final List<PlacementModifier> placementModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SEASHELL_FEATURE = FeatureUtils.createKey("rocks:seashell");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> STARFISH_FEATURE = FeatureUtils.createKey("rocks:starfish");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> UNDERWATER_STARFISH_FEATURE = FeatureUtils.createKey("rocks:underwater_starfish");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> UNDERWATER_SEASHELL_FEATURE = FeatureUtils.createKey("rocks:underwater_seashell");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SNOWY_GEYSER_FEATURE = FeatureUtils.createKey("rocks:snowy_geyser");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SEASHELL_FEATURE = createConfiguredKey("seashell");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> STARFISH_FEATURE = createConfiguredKey("starfish");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> UNDERWATER_STARFISH_FEATURE = createConfiguredKey("underwater_starfish");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> UNDERWATER_SEASHELL_FEATURE = createConfiguredKey("underwater_seashell");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SNOWY_GEYSER_FEATURE = createConfiguredKey("snowy_geyser");
 
-	public static void configuredBootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
+	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String pName) {
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
+	
+	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 		FeatureUtils.register(context, SEASHELL_FEATURE,
 				Feature.RANDOM_PATCH, new RandomPatchConfiguration(96, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
 						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
@@ -74,13 +79,17 @@ public class MiscFeatures {
 				FeatureRegistry.SNOWY_GEYSER_FEATURE.get(), new ProbabilityFeatureConfiguration(1));
 	}
 
-	public static final ResourceKey<PlacedFeature> PLACED_SEASHELL_FEATURE = PlacementUtils.createKey("rocks:seashell");
-	public static final ResourceKey<PlacedFeature> PLACED_STARFISH_FEATURE = PlacementUtils.createKey("rocks:starfish");
-	public static final ResourceKey<PlacedFeature> PLACED_UNDERWATER_STARFISH_FEATURE = PlacementUtils.createKey("rocks:underwater_starfish");
-	public static final ResourceKey<PlacedFeature> PLACED_UNDERWATER_SEASHELL_FEATURE = PlacementUtils.createKey("rocks:underwater_seashell");
-	public static final ResourceKey<PlacedFeature> PLACED_SNOWY_GEYSER_FEATURE = PlacementUtils.createKey("rocks:snowy_geyser");
+	public static final ResourceKey<PlacedFeature> PLACED_SEASHELL_FEATURE = createPlacedFeature("seashell");
+	public static final ResourceKey<PlacedFeature> PLACED_STARFISH_FEATURE = createPlacedFeature("starfish");
+	public static final ResourceKey<PlacedFeature> PLACED_UNDERWATER_STARFISH_FEATURE = createPlacedFeature("underwater_starfish");
+	public static final ResourceKey<PlacedFeature> PLACED_UNDERWATER_SEASHELL_FEATURE = createPlacedFeature("underwater_seashell");
+	public static final ResourceKey<PlacedFeature> PLACED_SNOWY_GEYSER_FEATURE = createPlacedFeature("snowy_geyser");
 
-	public static void placedBootstrap(BootstapContext<PlacedFeature> context) {
+	public static ResourceKey<PlacedFeature> createPlacedFeature(String pName) {
+		return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
+	
+	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
 		List<PlacementModifier> modifiers = new ArrayList<>(placementModifiers);
 		modifiers.add(CountPlacement.of(1));

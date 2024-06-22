@@ -2,6 +2,7 @@ package eu.midnightdust.motschen.rocks.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -36,5 +37,15 @@ public class Pinecone extends Block {
 
 	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
 		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
+	}
+
+	@Override
+	protected boolean propagatesSkylightDown(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+		return true;
+	}
+
+	@Override
+	protected boolean canBeReplaced(BlockState pState, BlockPlaceContext pUseContext) {
+		return true;
 	}
 }

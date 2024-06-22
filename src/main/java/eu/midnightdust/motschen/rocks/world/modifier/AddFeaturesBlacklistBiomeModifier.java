@@ -1,6 +1,6 @@
 package eu.midnightdust.motschen.rocks.world.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import eu.midnightdust.motschen.rocks.world.WorldGenHandler;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -26,7 +26,7 @@ public record AddFeaturesBlacklistBiomeModifier(List<HolderSet<Biome>> biomes, L
 	}
 
 	@Override
-	public Codec<? extends BiomeModifier> codec() {
+	public MapCodec<? extends BiomeModifier> codec() {
 		return WorldGenHandler.ADD_FEATURES_BLACKLIST_BIOME_MODIFIER_TYPE.get();
 	}
 }

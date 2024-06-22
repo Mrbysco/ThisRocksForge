@@ -5,7 +5,7 @@
   "step": "top_layer_modification",
   "whitelist": [
     "#minecraft:is_beach",
-    "#forge:is_sandy",
+    "#c:is_sandy",
     "#minecraft:is_badlands"
   ]
 }

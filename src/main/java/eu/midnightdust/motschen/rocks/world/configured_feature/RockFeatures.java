@@ -7,10 +7,11 @@ import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,18 +32,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RockFeatures {
-	public static List<PlacementModifier> rockModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+	public static final List<PlacementModifier> rockModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ROCK_FEATURE = FeatureUtils.createKey("rocks:rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> GRANITE_ROCK_FEATURE = FeatureUtils.createKey("rocks:granite_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> DIORITE_ROCK_FEATURE = FeatureUtils.createKey("rocks:diorite_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ANDESITE_ROCK_FEATURE = FeatureUtils.createKey("rocks:andesite_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SAND_ROCK_FEATURE = FeatureUtils.createKey("rocks:sand_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> RED_SAND_ROCK_FEATURE = FeatureUtils.createKey("rocks:red_sand_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> END_STONE_ROCK_FEATURE = FeatureUtils.createKey("rocks:endstone_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> GRAVEL_ROCK_FEATURE = FeatureUtils.createKey("rocks:gravel_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> ROCK_FEATURE = createConfiguredKey("rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> GRANITE_ROCK_FEATURE = createConfiguredKey("granite_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> DIORITE_ROCK_FEATURE = createConfiguredKey("diorite_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> ANDESITE_ROCK_FEATURE = createConfiguredKey("andesite_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SAND_ROCK_FEATURE = createConfiguredKey("sand_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> RED_SAND_ROCK_FEATURE = createConfiguredKey("red_sand_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> END_STONE_ROCK_FEATURE = createConfiguredKey("endstone_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> GRAVEL_ROCK_FEATURE = createConfiguredKey("gravel_rock");
 
-	public static void configuredBootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
+	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String pName) {
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
+
+	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 		FeatureUtils.register(context, ROCK_FEATURE,
 				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
 						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
@@ -125,16 +130,20 @@ public class RockFeatures {
 								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.GRAVEL))))));
 	}
 
-	public static final ResourceKey<PlacedFeature> PLACED_ROCK_FEATURE = PlacementUtils.createKey("rocks:rock");
-	public static final ResourceKey<PlacedFeature> PLACED_GRANITE_ROCK_FEATURE = PlacementUtils.createKey("rocks:granite_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_DIORITE_ROCK_FEATURE = PlacementUtils.createKey("rocks:diorite_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_ANDESITE_ROCK_FEATURE = PlacementUtils.createKey("rocks:andesite_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_SAND_ROCK_FEATURE = PlacementUtils.createKey("rocks:sand_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_RED_SAND_ROCK_FEATURE = PlacementUtils.createKey("rocks:red_sand_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_END_STONE_ROCK_FEATURE = PlacementUtils.createKey("rocks:endstone_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_GRAVEL_ROCK_FEATURE = PlacementUtils.createKey("rocks:gravel_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_ROCK_FEATURE = createPlacedFeature("rock");
+	public static final ResourceKey<PlacedFeature> PLACED_GRANITE_ROCK_FEATURE = createPlacedFeature("granite_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_DIORITE_ROCK_FEATURE = createPlacedFeature("diorite_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_ANDESITE_ROCK_FEATURE = createPlacedFeature("andesite_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_SAND_ROCK_FEATURE = createPlacedFeature("sand_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_RED_SAND_ROCK_FEATURE = createPlacedFeature("red_sand_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_END_STONE_ROCK_FEATURE = createPlacedFeature("endstone_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_GRAVEL_ROCK_FEATURE = createPlacedFeature("gravel_rock");
 
-	public static void placedBootstrap(BootstapContext<PlacedFeature> context) {
+	public static ResourceKey<PlacedFeature> createPlacedFeature(String pName) {
+		return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
+
+	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
 		List<PlacementModifier> rockModifiers = new ArrayList<>(RockFeatures.rockModifiers);

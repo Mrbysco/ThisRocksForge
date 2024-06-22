@@ -4,6 +4,6 @@
   "features": "rocks:mangrove_stick",
   "step": "top_layer_modification",
   "whitelist": [
-    "#forge:is_mangrove_swamp"
+    "#c:is_mangrove_swamp"
   ]
 }

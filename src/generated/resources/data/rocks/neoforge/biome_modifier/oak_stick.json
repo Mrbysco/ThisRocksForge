@@ -5,7 +5,7 @@
   "step": "top_layer_modification",
   "whitelist": [
     "#minecraft:is_forest",
-    "#forge:is_plains",
-    "#forge:is_swamp"
+    "#c:is_plains",
+    "#c:is_swamp"
   ]
 }

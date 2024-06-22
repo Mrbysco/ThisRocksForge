@@ -5,10 +5,11 @@ import eu.midnightdust.motschen.rocks.blockstates.StickVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
@@ -28,20 +29,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StickFeatures {
-	public static List<PlacementModifier> stickModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+	public static final List<PlacementModifier> stickModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> OAK_STICK_FEATURE = FeatureUtils.createKey("rocks:oak_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SPRUCE_STICK_FEATURE = FeatureUtils.createKey("rocks:spruce_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> PINECONE_FEATURE = FeatureUtils.createKey("rocks:pinecone");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> BIRCH_STICK_FEATURE = FeatureUtils.createKey("rocks:birch_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ACACIA_STICK_FEATURE = FeatureUtils.createKey("rocks:acacia_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_STICK_FEATURE = FeatureUtils.createKey("rocks:jungle_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> DARK_OAK_STICK_FEATURE = FeatureUtils.createKey("rocks:dark_oak_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> MANGROVE_STICK_FEATURE = FeatureUtils.createKey("rocks:mangrove_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> CHERRY_STICK_FEATURE = FeatureUtils.createKey("rocks:cherry_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> BAMBOO_STICK_FEATURE = FeatureUtils.createKey("rocks:bamboo_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> OAK_STICK_FEATURE = createConfiguredKey("oak_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SPRUCE_STICK_FEATURE = createConfiguredKey("spruce_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> PINECONE_FEATURE = createConfiguredKey("pinecone");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> BIRCH_STICK_FEATURE = createConfiguredKey("birch_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> ACACIA_STICK_FEATURE = createConfiguredKey("acacia_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_STICK_FEATURE = createConfiguredKey("jungle_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> DARK_OAK_STICK_FEATURE = createConfiguredKey("dark_oak_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> MANGROVE_STICK_FEATURE = createConfiguredKey("mangrove_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CHERRY_STICK_FEATURE = createConfiguredKey("cherry_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> BAMBOO_STICK_FEATURE = createConfiguredKey("bamboo_stick");
 
-	public static void configuredBootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
+	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String pName) {
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
+
+	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 		FeatureUtils.register(context, OAK_STICK_FEATURE,
 				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
 						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
@@ -121,18 +126,22 @@ public class StickFeatures {
 						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
 	}
 
-	public static final ResourceKey<PlacedFeature> PLACED_OAK_STICK_FEATURE = PlacementUtils.createKey("rocks:oak_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_SPRUCE_STICK_FEATURE = PlacementUtils.createKey("rocks:spruce_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_PINECONE_FEATURE = PlacementUtils.createKey("rocks:pinecone");
-	public static final ResourceKey<PlacedFeature> PLACED_BIRCH_STICK_FEATURE = PlacementUtils.createKey("rocks:birch_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_ACACIA_STICK_FEATURE = PlacementUtils.createKey("rocks:acacia_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_JUNGLE_STICK_FEATURE = PlacementUtils.createKey("rocks:jungle_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_DARK_OAK_STICK_FEATURE = PlacementUtils.createKey("rocks:dark_oak_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_MANGROVE_STICK_FEATURE = PlacementUtils.createKey("rocks:mangrove_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_CHERRY_STICK_FEATURE = PlacementUtils.createKey("rocks:cherry_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_BAMBOO_STICK_FEATURE = PlacementUtils.createKey("rocks:bamboo_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_OAK_STICK_FEATURE = createPlacedFeature("oak_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_SPRUCE_STICK_FEATURE = createPlacedFeature("spruce_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_PINECONE_FEATURE = createPlacedFeature("pinecone");
+	public static final ResourceKey<PlacedFeature> PLACED_BIRCH_STICK_FEATURE = createPlacedFeature("birch_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_ACACIA_STICK_FEATURE = createPlacedFeature("acacia_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_JUNGLE_STICK_FEATURE = createPlacedFeature("jungle_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_DARK_OAK_STICK_FEATURE = createPlacedFeature("dark_oak_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_MANGROVE_STICK_FEATURE = createPlacedFeature("mangrove_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_CHERRY_STICK_FEATURE = createPlacedFeature("cherry_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_BAMBOO_STICK_FEATURE = createPlacedFeature("bamboo_stick");
 
-	public static void placedBootstrap(BootstapContext<PlacedFeature> context) {
+	public static ResourceKey<PlacedFeature> createPlacedFeature(String pName) {
+		return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
+
+	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
 		List<PlacementModifier> stickModifiers = new ArrayList<>(StickFeatures.stickModifiers);

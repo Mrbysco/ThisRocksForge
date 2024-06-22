@@ -4,6 +4,6 @@
   "features": "rocks:cherry_stick",
   "step": "top_layer_modification",
   "whitelist": [
-    "#forge:is_cherry_grove"
+    "#c:is_cherry_grove"
   ]
 }

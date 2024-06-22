@@ -1,20 +1,19 @@
 package eu.midnightdust.motschen.rocks.datagen;
 
 import eu.midnightdust.motschen.rocks.Rocks;
-import eu.midnightdust.motschen.rocks.blockstates.StarfishVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import eu.midnightdust.motschen.rocks.world.configured_feature.MiscFeatures;
 import eu.midnightdust.motschen.rocks.world.configured_feature.NetherFeatures;
 import eu.midnightdust.motschen.rocks.world.configured_feature.RockFeatures;
 import eu.midnightdust.motschen.rocks.world.configured_feature.StickFeatures;
 import eu.midnightdust.motschen.rocks.world.modifier.AddFeaturesBlacklistBiomeModifier;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Cloner;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
@@ -31,8 +30,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -43,13 +44,12 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
+import net.minecraft.world.level.storage.loot.functions.CopyBlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -58,11 +58,10 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class RocksDatagen {
 	@SubscribeEvent
 	public static void gatherData(GatherDataEvent event) {
@@ -72,7 +71,7 @@ public class RocksDatagen {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(event.includeServer(), new Loots(packOutput));
+			generator.addProvider(event.includeServer(), new Loots(packOutput, lookupProvider));
 			generator.addProvider(event.includeServer(), new Recipes(packOutput, lookupProvider));
 			generator.addProvider(event.includeServer(), new RocksBiomeTags(packOutput, lookupProvider, helper));
 
@@ -284,16 +283,16 @@ public class RocksDatagen {
 
 
 	private static class Loots extends LootTableProvider {
-		public Loots(PackOutput packOutput) {
+		public Loots(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
 			super(packOutput, Set.of(), List.of(
 					new SubProviderEntry(RocksBlockTables::new, LootContextParamSets.BLOCK)
-			));
+			), lookupProvider);
 		}
 
 		public static class RocksBlockTables extends BlockLootSubProvider {
 
-			protected RocksBlockTables() {
-				super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+			protected RocksBlockTables(HolderLookup.Provider provider) {
+				super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
 			}
 
 			private static final float[] NAUTILOUS_CHANCE = new float[]{0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F};
@@ -333,11 +332,16 @@ public class RocksDatagen {
 			}
 
 			protected LootTable.Builder createSeashellDrop(Block block) {
-				return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(applyExplosionDecay(block, LootItem.lootTableItem(Items.NAUTILUS_SHELL).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, NAUTILOUS_CHANCE)))));
+				HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+				return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(applyExplosionDecay(block, LootItem.lootTableItem(Items.NAUTILUS_SHELL)
+								.when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), NAUTILOUS_CHANCE)))));
 			}
 
 			protected LootTable.Builder createStarfishDrop(Block starFish) {
-				return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(applyExplosionDecay(starFish, LootItem.lootTableItem(starFish).apply(SetNbtFunction.setTag(getStarfishTag("red"))).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(starFish).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Rocks.STARFISH_VARIATION, StarfishVariation.RED))))).add(applyExplosionDecay(starFish, LootItem.lootTableItem(starFish).apply(SetNbtFunction.setTag(getStarfishTag("pink"))).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(starFish).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Rocks.STARFISH_VARIATION, StarfishVariation.PINK))))).add(applyExplosionDecay(starFish, LootItem.lootTableItem(starFish).apply(SetNbtFunction.setTag(getStarfishTag("orange"))).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(starFish).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Rocks.STARFISH_VARIATION, StarfishVariation.ORANGE))))));
+				return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(LootItem.lootTableItem(starFish).apply(CopyBlockState.copyState(starFish).copy(Rocks.STARFISH_VARIATION)))
+				);
 			}
 
 			private static CompoundTag getStarfishTag(String color) {
@@ -348,13 +352,13 @@ public class RocksDatagen {
 
 			@Override
 			protected Iterable<Block> getKnownBlocks() {
-				return (Iterable<Block>) RocksRegistry.BLOCKS.getEntries().stream().map(holder -> (Block) holder.get())::iterator;
+				return RocksRegistry.BLOCKS.getEntries().stream().map(holder -> (Block) holder.get())::iterator;
 			}
 		}
 
 		@Override
-		protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationContext) {
-			map.forEach((name, table) -> table.validate(validationContext));
+		protected void validate(WritableRegistry<LootTable> writableregistry, ValidationContext validationcontext, ProblemReporter.Collector problemreporter$collector) {
+			super.validate(writableregistry, validationcontext, problemreporter$collector);
 		}
 	}
 
@@ -365,15 +369,15 @@ public class RocksDatagen {
 
 		@Override
 		protected void buildRecipes(RecipeOutput recipeOutput) {
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.ANDESITE).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "andesite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.COBBLESTONE).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "cobblestone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIORITE).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "diorite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.END_STONE).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "end_stone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.GRANITE).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "granite_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.NETHERRACK).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "netherrack_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.RED_SANDSTONE).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "red_sandstone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SANDSTONE).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "sandstone_from_splitter"));
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SOUL_SOIL).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, new ResourceLocation(Rocks.MOD_ID, "soul_soil_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.ANDESITE).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).requires(RocksRegistry.ANDESITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "andesite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.COBBLESTONE).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).requires(RocksRegistry.COBBLESTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "cobblestone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIORITE).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).requires(RocksRegistry.DIORITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "diorite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.END_STONE).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).requires(RocksRegistry.END_STONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "end_stone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.GRANITE).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).requires(RocksRegistry.GRANITE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "granite_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.NETHERRACK).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).requires(RocksRegistry.NETHERRACK_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "netherrack_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.RED_SANDSTONE).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).requires(RocksRegistry.RED_SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "red_sandstone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SANDSTONE).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).requires(RocksRegistry.SANDSTONE_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "sandstone_from_splitter"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.SOUL_SOIL).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).requires(RocksRegistry.SOUL_SOIL_SPLITTER.get()).unlockedBy("none", has(Items.DIRT)).save(recipeOutput, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, "soul_soil_from_splitter"));
 		}
 	}
 
@@ -383,9 +387,9 @@ public class RocksDatagen {
 			super(packOutput, lookupProvider, Rocks.MOD_ID, existingFileHelper);
 		}
 
-		public static final TagKey<Biome> IS_DARK_FOREST = create(new ResourceLocation("forge", "is_dark_forest"));
-		public static final TagKey<Biome> IS_MANGROVE_SWAMP = create(new ResourceLocation("forge", "is_mangrove_swamp"));
-		public static final TagKey<Biome> IS_CHERRY_GROVE = create(new ResourceLocation("forge", "is_cherry_grove"));
+		public static final TagKey<Biome> IS_DARK_FOREST = create(ResourceLocation.fromNamespaceAndPath("c", "is_dark_forest"));
+		public static final TagKey<Biome> IS_MANGROVE_SWAMP = create(ResourceLocation.fromNamespaceAndPath("c", "is_mangrove_swamp"));
+		public static final TagKey<Biome> IS_CHERRY_GROVE = create(ResourceLocation.fromNamespaceAndPath("c", "is_cherry_grove"));
 
 		private static TagKey<Biome> create(ResourceLocation location) {
 			return TagKey.create(Registries.BIOME, location);

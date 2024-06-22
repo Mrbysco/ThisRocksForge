@@ -30,6 +30,7 @@ import java.util.Objects;
 public class Rock extends Block implements SimpleWaterloggedBlock {
 
 	private static final VoxelShape SHAPE;
+	private static final VoxelShape SHAPE_LARGE;
 	private static final EnumProperty<RockVariation> ROCK_VARIATION = Rocks.ROCK_VARIATION;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -69,11 +70,12 @@ public class Rock extends Block implements SimpleWaterloggedBlock {
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return state.getValue(ROCK_VARIATION).equals(RockVariation.LARGE) ? SHAPE_LARGE : SHAPE;
 	}
 
 	static {
 		SHAPE = box(0, 0, 0, 16, 3, 16);
+		SHAPE_LARGE = box(0, 0, 0, 16, 3, 16);
 	}
 
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {

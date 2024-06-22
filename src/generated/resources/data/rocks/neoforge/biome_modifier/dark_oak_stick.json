@@ -4,6 +4,6 @@
   "features": "rocks:dark_oak_stick",
   "step": "top_layer_modification",
   "whitelist": [
-    "#forge:is_dark_forest"
+    "#c:is_dark_forest"
   ]
 }

@@ -80,4 +80,14 @@ public class Stick extends Block implements SimpleWaterloggedBlock {
 	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
 		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
 	}
+
+	@Override
+	protected boolean propagatesSkylightDown(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+		return true;
+	}
+
+	@Override
+	protected boolean canBeReplaced(BlockState pState, BlockPlaceContext pUseContext) {
+		return true;
+	}
 }

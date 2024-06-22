@@ -12,11 +12,11 @@ import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import eu.midnightdust.motschen.rocks.world.FeatureRegistry;
 import eu.midnightdust.motschen.rocks.world.WorldGenHandler;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
 @Mod(Rocks.MOD_ID)
@@ -29,8 +29,8 @@ public class Rocks {
 	public static final EnumProperty<SeashellVariation> SEASHELL_VARIATION = EnumProperty.create("variation", SeashellVariation.class);
 	public static final EnumProperty<StarfishVariation> STARFISH_VARIATION = EnumProperty.create("variation", StarfishVariation.class);
 
-	public Rocks(IEventBus eventBus) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, RocksConfig.commonSpec);
+	public Rocks(IEventBus eventBus, ModContainer container, Dist dist) {
+		container.registerConfig(ModConfig.Type.COMMON, RocksConfig.commonSpec);
 		eventBus.register(RocksConfig.class);
 
 		RocksRegistry.BLOCKS.register(eventBus);
@@ -40,7 +40,7 @@ public class Rocks {
 		FeatureRegistry.FEATURES.register(eventBus);
 		WorldGenHandler.BIOME_MODIFIER_SERIALIZERS.register(eventBus);
 
-		if (FMLEnvironment.dist.isClient()) {
+		if (dist.isClient()) {
 			eventBus.addListener(ClientHandler::onClientSetup);
 		}
 	}

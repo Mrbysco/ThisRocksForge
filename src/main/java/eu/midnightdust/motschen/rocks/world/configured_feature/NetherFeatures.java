@@ -6,10 +6,11 @@ import eu.midnightdust.motschen.rocks.blockstates.StickVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,17 +29,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NetherFeatures {
-	public static List<PlacementModifier> netherModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.RANGE_4_4, BiomeFilter.biome());
+	public static final List<PlacementModifier> netherModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.RANGE_4_4, BiomeFilter.biome());
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHERRACK_ROCK_FEATURE = FeatureUtils.createKey("rocks:netherrack_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SOUL_SOIL_ROCK_FEATURE = FeatureUtils.createKey("rocks:soul_soil_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_GRAVEL_ROCK_FEATURE = FeatureUtils.createKey("rocks:nether_gravel_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_GEYSER_FEATURE = FeatureUtils.createKey("rocks:nether_geyser");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> WARPED_STICK_FEATURE = FeatureUtils.createKey("rocks:warped_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> CRIMSON_STICK_FEATURE = FeatureUtils.createKey("rocks:crimson_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHERRACK_ROCK_FEATURE = createConfiguredKey("netherrack_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SOUL_SOIL_ROCK_FEATURE = createConfiguredKey("soul_soil_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_GRAVEL_ROCK_FEATURE = createConfiguredKey("nether_gravel_rock");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_GEYSER_FEATURE = createConfiguredKey("nether_geyser");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> WARPED_STICK_FEATURE = createConfiguredKey("warped_stick");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CRIMSON_STICK_FEATURE = createConfiguredKey("crimson_stick");
+
+	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String pName) {
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
 
 
-	public static void configuredBootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
+	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 		FeatureUtils.register(context, NETHERRACK_ROCK_FEATURE,
 				Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
 						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
@@ -89,14 +94,18 @@ public class NetherFeatures {
 						List.of(Blocks.NETHERRACK)));
 	}
 
-	public static final ResourceKey<PlacedFeature> PLACED_NETHERRACK_ROCK_FEATURE = PlacementUtils.createKey("rocks:netherrack_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_SOUL_SOIL_ROCK_FEATURE = PlacementUtils.createKey("rocks:soul_soil_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_NETHER_GRAVEL_ROCK_FEATURE = PlacementUtils.createKey("rocks:nether_gravel_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_WARPED_STICK_FEATURE = PlacementUtils.createKey("rocks:warped_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_CRIMSON_STICK_FEATURE = PlacementUtils.createKey("rocks:crimson_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_NETHER_GEYSER_FEATURE = PlacementUtils.createKey("rocks:nether_geyser");
+	public static final ResourceKey<PlacedFeature> PLACED_NETHERRACK_ROCK_FEATURE = createPlacedFeature("netherrack_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_SOUL_SOIL_ROCK_FEATURE = createPlacedFeature("soul_soil_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_NETHER_GRAVEL_ROCK_FEATURE = createPlacedFeature("nether_gravel_rock");
+	public static final ResourceKey<PlacedFeature> PLACED_WARPED_STICK_FEATURE = createPlacedFeature("warped_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_CRIMSON_STICK_FEATURE = createPlacedFeature("crimson_stick");
+	public static final ResourceKey<PlacedFeature> PLACED_NETHER_GEYSER_FEATURE = createPlacedFeature("nether_geyser");
 
-	public static void placedBootstrap(BootstapContext<PlacedFeature> context) {
+	public static ResourceKey<PlacedFeature> createPlacedFeature(String pName) {
+		return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	}
+
+	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
 		List<PlacementModifier> netherModifierList = new ArrayList<>(netherModifiers);
 		netherModifierList.add(CountPlacement.of(90));

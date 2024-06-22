@@ -14,7 +14,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeat
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 
 public class SnowFeature extends Feature<ProbabilityFeatureConfiguration> {
-	WeightedStateProvider weightedBlockStateProvider1;
+	final WeightedStateProvider weightedBlockStateProvider1;
 
 	public SnowFeature(Codec<ProbabilityFeatureConfiguration> codec, WeightedStateProvider weightedBlockStateProvider) {
 		super(codec);

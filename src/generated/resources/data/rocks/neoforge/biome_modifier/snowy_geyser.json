@@ -4,6 +4,6 @@
   "features": "rocks:snowy_geyser",
   "step": "top_layer_modification",
   "whitelist": [
-    "#forge:is_snowy"
+    "#c:is_snowy"
   ]
 }

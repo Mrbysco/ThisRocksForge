@@ -88,4 +88,9 @@ public class Seashell extends Block implements SimpleWaterloggedBlock {
 	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
 		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
 	}
+
+	@Override
+	protected boolean canBeReplaced(BlockState pState, BlockPlaceContext pUseContext) {
+		return true;
+	}
 }

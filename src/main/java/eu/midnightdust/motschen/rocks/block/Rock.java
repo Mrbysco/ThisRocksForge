@@ -21,6 +21,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -40,28 +42,20 @@ public class Rock extends Block implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
-		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-				.setValue(ROCK_VARIATION, RockVariation.TINY).setValue(WATERLOGGED, false);
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
+		return Objects.requireNonNull(super.getStateForPlacement(context))
+				.setValue(ROCK_VARIATION, RockVariation.TINY)
+				.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 	}
 
 	@Override
 	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (player.isCreative()) {
-			if (state.getValue(ROCK_VARIATION) == RockVariation.TINY) {
-				level.setBlockAndUpdate(pos, state.setValue(ROCK_VARIATION, RockVariation.SMALL));
-			}
-			if (state.getValue(ROCK_VARIATION) == RockVariation.SMALL) {
-				level.setBlockAndUpdate(pos, state.setValue(ROCK_VARIATION, RockVariation.MEDIUM));
-			}
-			if (state.getValue(ROCK_VARIATION) == RockVariation.MEDIUM) {
-				level.setBlockAndUpdate(pos, state.setValue(ROCK_VARIATION, RockVariation.LARGE));
-			}
-			if (state.getValue(ROCK_VARIATION) == RockVariation.LARGE) {
-				level.setBlockAndUpdate(pos, state.setValue(ROCK_VARIATION, RockVariation.TINY));
-			}
+			level.setBlockAndUpdate(pos, state.setValue(ROCK_VARIATION, state.getValue(ROCK_VARIATION).next()));
 			return InteractionResult.SUCCESS;
-		} else return InteractionResult.FAIL;
+		}
+		else return InteractionResult.FAIL;
 	}
 
 	@Override
@@ -86,6 +80,15 @@ public class Rock extends Block implements SimpleWaterloggedBlock {
 
 	@Override
 	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+		if (state.getValue(WATERLOGGED)) {
+			scheduledTickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+		}
+
 		return !state.canSurvive(level, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
+	}
+
+	@Override
+	protected FluidState getFluidState(BlockState state) {
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 }

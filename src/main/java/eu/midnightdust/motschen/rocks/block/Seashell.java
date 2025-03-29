@@ -41,15 +41,16 @@ public class Seashell extends Block implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	public FluidState getFluidState(BlockState blockState_1) {
-		return blockState_1.getValue(WATERLOGGED) ? Fluids.WATER.getSource(true) : super.getFluidState(blockState_1);
+	protected FluidState getFluidState(BlockState state) {
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
 		FluidState fluidState = itemPlacementContext.getLevel().getFluidState(itemPlacementContext.getClickedPos());
 		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-				.setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+				.setValue(SEASHELL_VARIATION, SeashellVariation.values()[itemPlacementContext.getLevel().random.nextIntBetweenInclusive(0, 2)])
+				.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 	}
 
 	@Override
@@ -89,6 +90,9 @@ public class Seashell extends Block implements SimpleWaterloggedBlock {
 
 	@Override
 	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+		if (state.getValue(WATERLOGGED)) {
+			scheduledTickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+		}
 		return !state.canSurvive(level, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
 	}
 

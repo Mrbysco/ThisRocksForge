@@ -7,7 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,7 +60,7 @@ public class RockFeatures {
 	}
 
 	public static ConfiguredFeature<?, ?> ROCK_MIX_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-			new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+			new WeightedStateProvider(WeightedList.<BlockState>builder()
 					.add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.TINY), 10).add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.SMALL), 7)
 					.add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.MEDIUM), 5).add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.LARGE), 1)
 					.add(rocksByType.get(RockType.DIORITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.TINY), 10).add(rocksByType.get(RockType.DIORITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.SMALL), 7)
@@ -70,7 +70,7 @@ public class RockFeatures {
 					.build()))
 	);
 	public static ConfiguredFeature<?, ?> NETHER_GRAVEL_ROCK_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-			new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+			new WeightedStateProvider(WeightedList.<BlockState>builder()
 					.add(rocksByType.get(RockType.GRAVEL).get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
 					.add(rocksByType.get(RockType.GRAVEL).get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
 					.add(rocksByType.get(RockType.GRAVEL).get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
@@ -83,7 +83,7 @@ public class RockFeatures {
 	public static void init() {
 		for (RockType type : RockType.values()) {
 			ConfiguredFeature<?, ?> ROCK_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-					new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+					new WeightedStateProvider(WeightedList.<BlockState>builder()
 							.add(rocksByType.get(type).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.TINY), 10)
 							.add(rocksByType.get(type).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.SMALL), 7)
 							.add(rocksByType.get(type).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.MEDIUM), 5)

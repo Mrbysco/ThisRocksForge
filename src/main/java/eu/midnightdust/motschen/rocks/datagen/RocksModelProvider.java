@@ -1,5 +1,6 @@
 package eu.midnightdust.motschen.rocks.datagen;
 
+import com.mojang.math.Quadrant;
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.block.NetherGeyser;
 import eu.midnightdust.motschen.rocks.block.OverworldGeyser;
@@ -13,28 +14,27 @@ import eu.midnightdust.motschen.rocks.util.StickType;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
-import net.minecraft.client.data.models.blockstates.BlockStateGenerator;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
-import net.minecraft.client.data.models.blockstates.VariantProperty;
 import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -105,22 +105,21 @@ public class RocksModelProvider extends ModelProvider {
 		ResourceLocation itemModel = getSimpleParentModel(parentId, "").create(item, textureMap, modelGenerator.modelOutput);
 		modelGenerator.itemModelOutput.accept(item, ItemModelUtils.plainModel(itemModel));
 	}
-
 	public final void registerStarfishItemVariations(ItemModelGenerators modelGenerator, Block starfish) {
 		Map<StarfishVariation, ItemModel.Unbaked> variantMap = new HashMap<>();
 		for (StarfishVariation variation : StarfishVariation.values()) {
-			variantMap.put(variation, ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(starfish, "_" + variation.toString())));
+			variantMap.put(variation, ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(starfish, "_"+variation.toString())));
 		}
 		modelGenerator.itemModelOutput.accept(starfish.asItem(), ItemModelUtils.selectBlockItemProperty(Rocks.STARFISH_VARIATION, ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(starfish.asItem())), variantMap));
 	}
 
-	public static <T> List<Variant> getRandomRotationVariants(VariantProperty<T> baseSettings, T value) {
-		List<Variant> list = new ArrayList<>();
-		for (VariantProperties.Rotation rotation : VariantProperties.Rotation.values()) {
-			Variant rotatedVariant = Variant.variant().with(baseSettings, value);
-			list.add(rotatedVariant.with(VariantProperties.Y_ROT, rotation));
+	public static MultiVariant getRandomRotationWeightedVariant(ResourceLocation modelId) {
+		WeightedList.Builder<Variant> list = WeightedList.builder();
+		for (Quadrant rotation : Quadrant.values()) {
+			Variant rotatedVariant = new Variant(modelId, Variant.SimpleModelState.DEFAULT.withY(rotation));
+			list.add(rotatedVariant);
 		}
-		return list;
+		return new MultiVariant(list.build());
 	}
 
 	private static class RockModel {
@@ -134,14 +133,13 @@ public class RocksModelProvider extends ModelProvider {
 			modelGenerator.blockStateOutput.accept(createBlockState(rockBlock, new ResourceLocation[]{largeRock, mediumRock, smallRock, tinyRock}));
 		}
 
-		private static BlockStateGenerator createBlockState(Block rockBlock, ResourceLocation[] modelIds) {
-			return MultiVariantGenerator.multiVariant(rockBlock)
-					.with(PropertyDispatch.property(Rocks.ROCK_VARIATION)
-							.generateList(variation -> getRandomRotationVariants(VariantProperties.MODEL, modelIds[3 - variation.ordinal()]))
+		private static BlockModelDefinitionGenerator createBlockState(Block rockBlock, ResourceLocation[] modelIds) {
+			return MultiVariantGenerator.dispatch(rockBlock)
+					.with(PropertyDispatch.initial(Rocks.ROCK_VARIATION)
+							.generate(variation -> getRandomRotationWeightedVariant(modelIds[3 - variation.ordinal()]))
 					);
 		}
 	}
-
 	private static class StickModel {
 		public static void registerBlockModel(BlockModelGenerators modelGenerator, Block stickBlock, Block textureSource) {
 			TextureMapping textureMap = TextureMapping.singleSlot(ZERO_TEXTURE_KEY, TextureMapping.getBlockTexture(textureSource));
@@ -152,10 +150,10 @@ public class RocksModelProvider extends ModelProvider {
 			modelGenerator.blockStateOutput.accept(createBlockState(stickBlock, new ResourceLocation[]{largeRock, mediumRock, smallRock}));
 		}
 
-		private static BlockStateGenerator createBlockState(Block stickBlock, ResourceLocation[] modelIds) {
-			return MultiVariantGenerator.multiVariant(stickBlock)
-					.with(PropertyDispatch.property(Rocks.STICK_VARIATION)
-							.generateList(variation -> getRandomRotationVariants(VariantProperties.MODEL, modelIds[2 - variation.ordinal()]))
+		private static BlockModelDefinitionGenerator createBlockState(Block stickBlock, ResourceLocation[] modelIds) {
+			return MultiVariantGenerator.dispatch(stickBlock)
+					.with(PropertyDispatch.initial(Rocks.STICK_VARIATION)
+							.generate(variation -> getRandomRotationWeightedVariant(modelIds[2 - variation.ordinal()]))
 					);
 		}
 	}

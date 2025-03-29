@@ -10,7 +10,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
@@ -33,19 +33,19 @@ import static eu.midnightdust.motschen.rocks.util.RegistryUtil.register;
 
 public class MiscFeatures {
 	private static final ConfiguredFeature<?, ?> SEASHELL_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-			new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+			new WeightedStateProvider(WeightedList.<BlockState>builder()
 					.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION, SeashellVariation.YELLOW), 7)
 					.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION, SeashellVariation.PINK), 2)
 					.add(RocksRegistry.SEASHELL.get().defaultBlockState().setValue(Rocks.SEASHELL_VARIATION, SeashellVariation.WHITE), 6).build()
 			)));
 	public static ConfiguredFeature<?, ?> STARFISH_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-			new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+			new WeightedStateProvider(WeightedList.<BlockState>builder()
 					.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION, StarfishVariation.RED), 2)
 					.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION, StarfishVariation.PINK), 6)
 					.add(RocksRegistry.STARFISH.get().defaultBlockState().setValue(Rocks.STARFISH_VARIATION, StarfishVariation.ORANGE), 7).build()))
 	);
 	public static ConfiguredFeature<?, ?> PINECONE_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-			new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+			new WeightedStateProvider(WeightedList.<BlockState>builder()
 					.add(RocksRegistry.PINECONE.get().defaultBlockState(), 1).build()))
 	);
 

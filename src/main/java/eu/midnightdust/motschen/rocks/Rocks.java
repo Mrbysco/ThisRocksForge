@@ -15,8 +15,6 @@ import eu.midnightdust.motschen.rocks.util.RockType;
 import eu.midnightdust.motschen.rocks.util.StickType;
 import eu.midnightdust.motschen.rocks.world.FeatureRegistry;
 import eu.midnightdust.motschen.rocks.world.WorldGenHandler;
-import eu.midnightdust.motschen.rocks.world.configured_feature.RockFeatures;
-import eu.midnightdust.motschen.rocks.world.configured_feature.StickFeatures;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.properties.EnumProperty;

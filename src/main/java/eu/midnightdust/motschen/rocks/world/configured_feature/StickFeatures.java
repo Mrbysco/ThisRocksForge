@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,7 +51,7 @@ public class StickFeatures {
 	public static void init() {
 		for (StickType type : StickType.values()) {
 			ConfiguredFeature<?, ?> STICK_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-					new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+					new WeightedStateProvider(WeightedList.<BlockState>builder()
 							.add(sticksByType.get(type).get().defaultBlockState().setValue(STICK_VARIATION, StickVariation.SMALL), 7)
 							.add(sticksByType.get(type).get().defaultBlockState().setValue(STICK_VARIATION, StickVariation.MEDIUM), 5)
 							.add(sticksByType.get(type).get().defaultBlockState().setValue(STICK_VARIATION, StickVariation.LARGE), 1).build()))

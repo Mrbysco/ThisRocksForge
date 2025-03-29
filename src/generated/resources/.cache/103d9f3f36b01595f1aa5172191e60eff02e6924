@@ -1,4 +1,4 @@
-// 1.21.4	2025-03-29T21:36:27.7065558	Registries
+// 1.21.5	2025-03-29T23:58:11.8949545	Registries
 499a1ea7338747d3f9efd8aca935d094c9f2befd data/rocks/neoforge/biome_modifier/acacia_stick.json
 b1f59b0772d99a6a932792436511003ad6fde354 data/rocks/neoforge/biome_modifier/andesite_rock.json
 f15678ee829f206e3c98c50c015b94b1c8a2e4d9 data/rocks/neoforge/biome_modifier/bamboo_stick.json
@@ -50,7 +50,7 @@ d71c0556b644dcaf5737175f7336de62ebdbb167 data/rocks/worldgen/configured_feature/
 8955b2bdcd6fe707f3cedbbe43caaabe2ec1a655 data/rocks/worldgen/configured_feature/nether_gravel_rock.json
 ac68decd062ded192b01770ec250d76a55e76177 data/rocks/worldgen/configured_feature/oak_stick.json
 b3d96c0a736de3a3ca3c7c75aeba74305463c0ec data/rocks/worldgen/configured_feature/pale_oak_stick.json
-8df5facdb624449c37f7c1b9884027666f0e28a0 data/rocks/worldgen/configured_feature/pinecone.json
+a825ec88efbde5c94564d882245512471d401f7f data/rocks/worldgen/configured_feature/pinecone.json
 481607c0633032d954b3bc52063aaa6ce2e33bad data/rocks/worldgen/configured_feature/red_sand_rock.json
 78aa73ec326791518d5db28d45a6c808ade36271 data/rocks/worldgen/configured_feature/rock.json
 7edfde8ca54ed773d710a459159266c11c4a8b1b data/rocks/worldgen/configured_feature/rock_mix.json
@@ -82,7 +82,7 @@ ae1b4c625b9387c5dfc8c1eb53c1eda353ffa712 data/rocks/worldgen/placed_feature/jung
 778b0cb8e6e7a42d908928765593027e86a1ea4a data/rocks/worldgen/placed_feature/nether_gravel_rock.json
 ebaddc15f52cda4480ae94bd7b3d57b0cbbbbdfb data/rocks/worldgen/placed_feature/oak_stick.json
 acb2776236984ff29fa03b24d540eb792f86b144 data/rocks/worldgen/placed_feature/pale_oak_stick.json
-b8e69ef8d3be797f70d381a14ae393f1c6779926 data/rocks/worldgen/placed_feature/pinecone.json
+dd4435a715305f668b87bd04b7bc7fdae8f3d664 data/rocks/worldgen/placed_feature/pinecone.json
 2ad2c82c2ac31ac1b14be1a522fcad1983df66dd data/rocks/worldgen/placed_feature/red_sand_rock.json
 46b1646d8dad2fec36005bb30e15ae5276a043d1 data/rocks/worldgen/placed_feature/rock.json
 121167259aadc9cbb38769bbf055256647ed90a9 data/rocks/worldgen/placed_feature/rock_mix.json

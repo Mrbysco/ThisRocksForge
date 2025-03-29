@@ -7,7 +7,10 @@
         "entries": [
           {
             "data": {
-              "Name": "rocks:pinecone"
+              "Name": "rocks:pinecone",
+              "Properties": {
+                "waterlogged": "false"
+              }
             },
             "weight": 1
           }

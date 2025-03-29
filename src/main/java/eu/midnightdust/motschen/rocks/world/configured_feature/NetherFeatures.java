@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
@@ -26,7 +26,7 @@ import java.util.List;
 import static eu.midnightdust.motschen.rocks.util.RegistryUtil.register;
 
 public class NetherFeatures {
-	public static ConfiguredFeature<?, ?> NETHER_GEYSER_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(RocksRegistry.NETHER_GEYSER.get().defaultBlockState(), 1))));
+	public static ConfiguredFeature<?, ?> NETHER_GEYSER_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(new WeightedStateProvider(WeightedList.<BlockState>builder().add(RocksRegistry.NETHER_GEYSER.get().defaultBlockState(), 1))));
 
 	public static PlacedFeature NETHER_GEYSER_PLACED_FEATURE = new PlacedFeature(Holder.direct(NETHER_GEYSER_FEATURE), List.of(CountPlacement.of(15), RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome(), BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), ImmutableList.of(Blocks.NETHERRACK))))));
 

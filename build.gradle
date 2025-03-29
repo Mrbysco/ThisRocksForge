@@ -49,7 +49,7 @@ runs {
         programArgument '--nogui'
     }
 
-    data {
+    clientData {
         // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
         // workingDirectory project.file('run-data')
 
@@ -78,10 +78,10 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
-    compileOnly "mezz.jei:jei-${jei_minecraft}-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${jei_minecraft}-neoforge-api:${jei_version}"
-
-    localRuntime "mezz.jei:jei-${jei_minecraft}-neoforge:${jei_version}"
+//    compileOnly "mezz.jei:jei-${jei_minecraft}-common-api:${jei_version}"
+//    compileOnly "mezz.jei:jei-${jei_minecraft}-neoforge-api:${jei_version}"
+//
+//    localRuntime "mezz.jei:jei-${jei_minecraft}-neoforge:${jei_version}"
 }
 
 jar {

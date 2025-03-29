@@ -1,124 +1,40 @@
 package eu.midnightdust.motschen.rocks.world.configured_feature;
 
-import eu.midnightdust.motschen.rocks.Rocks;
-import eu.midnightdust.motschen.rocks.blockstates.RockVariation;
-import eu.midnightdust.motschen.rocks.blockstates.StickVariation;
+import com.google.common.collect.ImmutableList;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static eu.midnightdust.motschen.rocks.util.RegistryUtil.register;
+
 public class NetherFeatures {
-	public static final List<PlacementModifier> netherModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.RANGE_4_4, BiomeFilter.biome());
+	public static ConfiguredFeature<?, ?> NETHER_GEYSER_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(RocksRegistry.NETHER_GEYSER.get().defaultBlockState(), 1))));
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHERRACK_ROCK_FEATURE = createConfiguredKey("netherrack_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SOUL_SOIL_ROCK_FEATURE = createConfiguredKey("soul_soil_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_GRAVEL_ROCK_FEATURE = createConfiguredKey("nether_gravel_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_GEYSER_FEATURE = createConfiguredKey("nether_geyser");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> WARPED_STICK_FEATURE = createConfiguredKey("warped_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> CRIMSON_STICK_FEATURE = createConfiguredKey("crimson_stick");
-
-	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String pName) {
-		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
-	}
-
+	public static PlacedFeature NETHER_GEYSER_PLACED_FEATURE = new PlacedFeature(Holder.direct(NETHER_GEYSER_FEATURE), List.of(CountPlacement.of(15), RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome(), BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), ImmutableList.of(Blocks.NETHERRACK))))));
 
 	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-		FeatureUtils.register(context, NETHERRACK_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.NETHERRACK_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.NETHERRACK_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.NETHERRACK_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.NETHERRACK_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						List.of(Blocks.NETHERRACK, Blocks.WARPED_NYLIUM, Blocks.CRIMSON_NYLIUM)));
-
-		FeatureUtils.register(context, SOUL_SOIL_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.SOUL_SOIL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.SOUL_SOIL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.SOUL_SOIL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.SOUL_SOIL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						List.of(Blocks.SOUL_SOIL, Blocks.SOUL_SAND)));
-
-		FeatureUtils.register(context, NETHER_GRAVEL_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						List.of(Blocks.GRAVEL)));
-
-		FeatureUtils.register(context, WARPED_STICK_FEATURE,
-				Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.WARPED_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.WARPED_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.WARPED_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						List.of(Blocks.WARPED_NYLIUM)));
-
-		FeatureUtils.register(context, CRIMSON_STICK_FEATURE,
-				Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.CRIMSON_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.CRIMSON_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.CRIMSON_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						List.of(Blocks.CRIMSON_NYLIUM)));
-
-		FeatureUtils.register(context, NETHER_GEYSER_FEATURE,
-				Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.NETHER_GEYSER.get().defaultBlockState(), 1))),
-						List.of(Blocks.NETHERRACK)));
-	}
-
-	public static final ResourceKey<PlacedFeature> PLACED_NETHERRACK_ROCK_FEATURE = createPlacedFeature("netherrack_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_SOUL_SOIL_ROCK_FEATURE = createPlacedFeature("soul_soil_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_NETHER_GRAVEL_ROCK_FEATURE = createPlacedFeature("nether_gravel_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_WARPED_STICK_FEATURE = createPlacedFeature("warped_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_CRIMSON_STICK_FEATURE = createPlacedFeature("crimson_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_NETHER_GEYSER_FEATURE = createPlacedFeature("nether_geyser");
-
-	public static ResourceKey<PlacedFeature> createPlacedFeature(String pName) {
-		return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+		register(context, "nether_geyser", NETHER_GEYSER_FEATURE);
 	}
 
 	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
-		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
-		List<PlacementModifier> netherModifierList = new ArrayList<>(netherModifiers);
-		netherModifierList.add(CountPlacement.of(90));
-
-		PlacementUtils.register(context, PLACED_NETHERRACK_ROCK_FEATURE, holdergetter.getOrThrow(NETHERRACK_ROCK_FEATURE), netherModifierList);
-		PlacementUtils.register(context, PLACED_SOUL_SOIL_ROCK_FEATURE, holdergetter.getOrThrow(SOUL_SOIL_ROCK_FEATURE), netherModifierList);
-		PlacementUtils.register(context, PLACED_NETHER_GRAVEL_ROCK_FEATURE, holdergetter.getOrThrow(NETHER_GRAVEL_ROCK_FEATURE), netherModifierList);
-		PlacementUtils.register(context, PLACED_WARPED_STICK_FEATURE, holdergetter.getOrThrow(WARPED_STICK_FEATURE), netherModifierList);
-		PlacementUtils.register(context, PLACED_CRIMSON_STICK_FEATURE, holdergetter.getOrThrow(CRIMSON_STICK_FEATURE), netherModifierList);
-
-		List<PlacementModifier> geyserModifiers = new ArrayList<>(netherModifiers);
-		geyserModifiers.add(CountPlacement.of(30));
-
-		PlacementUtils.register(context, PLACED_NETHER_GEYSER_FEATURE, holdergetter.getOrThrow(NETHER_GEYSER_FEATURE), geyserModifiers);
+		register(context, "nether_geyser", NETHER_GEYSER_PLACED_FEATURE);
 	}
 }

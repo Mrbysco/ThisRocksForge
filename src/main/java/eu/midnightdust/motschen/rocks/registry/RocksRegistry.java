@@ -8,20 +8,23 @@ import eu.midnightdust.motschen.rocks.block.Rock;
 import eu.midnightdust.motschen.rocks.block.Seashell;
 import eu.midnightdust.motschen.rocks.block.Starfish;
 import eu.midnightdust.motschen.rocks.block.Stick;
+import eu.midnightdust.motschen.rocks.util.RockType;
+import eu.midnightdust.motschen.rocks.util.StickType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class RocksRegistry {
@@ -30,75 +33,71 @@ public class RocksRegistry {
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Rocks.MOD_ID);
 
 	//Blocks
-	public static final DeferredBlock<Block> ROCK = BLOCKS.register("rock", Rock::new);
-	public static final DeferredBlock<Block> GRANITE_ROCK = BLOCKS.register("granite_rock", Rock::new);
-	public static final DeferredBlock<Block> DIORITE_ROCK = BLOCKS.register("diorite_rock", Rock::new);
-	public static final DeferredBlock<Block> ANDESITE_ROCK = BLOCKS.register("andesite_rock", Rock::new);
-	public static final DeferredBlock<Block> SAND_ROCK = BLOCKS.register("sand_rock", Rock::new);
-	public static final DeferredBlock<Block> RED_SAND_ROCK = BLOCKS.register("red_sand_rock", Rock::new);
-	public static final DeferredBlock<Block> GRAVEL_ROCK = BLOCKS.register("gravel_rock", Rock::new);
-	public static final DeferredBlock<Block> END_STONE_ROCK = BLOCKS.register("end_stone_rock", Rock::new);
-	public static final DeferredBlock<Block> NETHERRACK_ROCK = BLOCKS.register("netherrack_rock", Rock::new);
-	public static final DeferredBlock<Block> SOUL_SOIL_ROCK = BLOCKS.register("soul_soil_rock", Rock::new);
+	public static final DeferredBlock<Rock> ROCK = registerRock("rock", RockType.STONE);
+	public static final DeferredBlock<Rock> GRANITE_ROCK = registerRock("granite_rock", RockType.GRANITE);
+	public static final DeferredBlock<Rock> DIORITE_ROCK = registerRock("diorite_rock", RockType.DIORITE);
+	public static final DeferredBlock<Rock> ANDESITE_ROCK = registerRock("andesite_rock", RockType.ANDESITE);
+	public static final DeferredBlock<Rock> SAND_ROCK = registerRock("sand_rock", RockType.SANDSTONE);
+	public static final DeferredBlock<Rock> RED_SAND_ROCK = registerRock("red_sand_rock", RockType.RED_SANDSTONE);
+	public static final DeferredBlock<Rock> GRAVEL_ROCK = registerRock("gravel_rock", RockType.GRAVEL);
+	public static final DeferredBlock<Rock> END_STONE_ROCK = registerRock("end_stone_rock", RockType.END_STONE);
+	public static final DeferredBlock<Rock> NETHERRACK_ROCK = registerRock("netherrack_rock", RockType.NETHERRACK);
+	public static final DeferredBlock<Rock> SOUL_SOIL_ROCK = registerRock("soul_soil_rock", RockType.SOUL_SOIL);
+	public static final DeferredBlock<Rock> ICE_ROCK = registerRock("ice_rock", RockType.ICE);
 
-	public static final DeferredBlock<Block> OAK_STICK = BLOCKS.register("oak_stick", Stick::new);
-	public static final DeferredBlock<Block> SPRUCE_STICK = BLOCKS.register("spruce_stick", Stick::new);
-	public static final DeferredBlock<Block> BIRCH_STICK = BLOCKS.register("birch_stick", Stick::new);
-	public static final DeferredBlock<Block> ACACIA_STICK = BLOCKS.register("acacia_stick", Stick::new);
-	public static final DeferredBlock<Block> JUNGLE_STICK = BLOCKS.register("jungle_stick", Stick::new);
-	public static final DeferredBlock<Block> DARK_OAK_STICK = BLOCKS.register("dark_oak_stick", Stick::new);
-	public static final DeferredBlock<Block> MANGROVE_STICK = BLOCKS.register("mangrove_stick", Stick::new);
-	public static final DeferredBlock<Block> CHERRY_STICK = BLOCKS.register("cherry_stick", Stick::new);
-	public static final DeferredBlock<Block> BAMBOO_STICK = BLOCKS.register("bamboo_stick", Stick::new);
-	public static final DeferredBlock<Block> CRIMSON_STICK = BLOCKS.register("crimson_stick", Stick::new);
-	public static final DeferredBlock<Block> WARPED_STICK = BLOCKS.register("warped_stick", Stick::new);
+	public static final DeferredBlock<Stick> OAK_STICK = registerStick("oak_stick", StickType.OAK);
+	public static final DeferredBlock<Stick> SPRUCE_STICK = registerStick("spruce_stick", StickType.SPRUCE);
+	public static final DeferredBlock<Stick> BIRCH_STICK = registerStick("birch_stick", StickType.BIRCH);
+	public static final DeferredBlock<Stick> ACACIA_STICK = registerStick("acacia_stick", StickType.ACACIA);
+	public static final DeferredBlock<Stick> JUNGLE_STICK = registerStick("jungle_stick", StickType.JUNGLE);
+	public static final DeferredBlock<Stick> DARK_OAK_STICK = registerStick("dark_oak_stick", StickType.DARK_OAK);
+	public static final DeferredBlock<Stick> MANGROVE_STICK = registerStick("mangrove_stick", StickType.MANGROVE);
+	public static final DeferredBlock<Stick> CHERRY_STICK = registerStick("cherry_stick", StickType.CHERRY);
+	public static final DeferredBlock<Stick> BAMBOO_STICK = registerStick("bamboo_stick", StickType.BAMBOO);
+	public static final DeferredBlock<Stick> PALE_OAK_STICK = registerStick("pale_oak_stick", StickType.PALE_OAK);
+	public static final DeferredBlock<Stick> CRIMSON_STICK = registerStick("crimson_stick", StickType.CRIMSON);
+	public static final DeferredBlock<Stick> WARPED_STICK = registerStick("warped_stick", StickType.WARPED);
 
-	public static final DeferredBlock<Block> PINECONE = BLOCKS.register("pinecone", Pinecone::new);
-	public static final DeferredBlock<Block> SEASHELL = BLOCKS.register("seashell", Seashell::new);
-	public static final DeferredBlock<Block> STARFISH = BLOCKS.register("starfish", Starfish::new);
-	public static final DeferredBlock<Block> GEYSER = BLOCKS.register("geyser", () -> new OverworldGeyser(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)));
-	public static final DeferredBlock<Block> NETHER_GEYSER = BLOCKS.register("nether_geyser", () -> new NetherGeyser(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)));
+	public static final DeferredBlock<Pinecone> PINECONE = registerBlockWithItem("pinecone", Pinecone::new, Properties.ofFullCopy(Blocks.POPPY));
+	public static final DeferredBlock<Seashell> SEASHELL = registerBlockWithItem("seashell", Seashell::new, Properties.ofFullCopy(Blocks.POPPY));
+	public static final DeferredBlock<Starfish> STARFISH = registerBlockWithItem("starfish", Starfish::new, Properties.ofFullCopy(Blocks.POPPY));
+	public static final DeferredBlock<OverworldGeyser> GEYSER = registerBlockWithItem("geyser", OverworldGeyser::new, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
+	public static final DeferredBlock<NetherGeyser> NETHER_GEYSER = registerBlockWithItem("nether_geyser", NetherGeyser::new, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
 
-	//Items
-	public static final DeferredItem<BlockItem> ROCK_ITEM = ITEMS.registerSimpleBlockItem(ROCK);
-	public static final DeferredItem<BlockItem> GRANITE_ROCK_ITEM = ITEMS.registerSimpleBlockItem(GRANITE_ROCK);
-	public static final DeferredItem<BlockItem> DIORITE_ROCK_ITEM = ITEMS.registerSimpleBlockItem(DIORITE_ROCK);
-	public static final DeferredItem<BlockItem> ANDESITE_ROCK_ITEM = ITEMS.registerSimpleBlockItem(ANDESITE_ROCK);
-	public static final DeferredItem<BlockItem> SAND_ROCK_ITEM = ITEMS.registerSimpleBlockItem(SAND_ROCK);
-	public static final DeferredItem<BlockItem> RED_SAND_ROCK_ITEM = ITEMS.registerSimpleBlockItem(RED_SAND_ROCK);
-	public static final DeferredItem<BlockItem> GRAVEL_ROCK_ITEM = ITEMS.registerSimpleBlockItem(GRAVEL_ROCK);
-	public static final DeferredItem<BlockItem> END_STONE_ROCK_ITEM = ITEMS.registerSimpleBlockItem(END_STONE_ROCK);
-	public static final DeferredItem<BlockItem> NETHERRACK_ROCK_ITEM = ITEMS.registerSimpleBlockItem(NETHERRACK_ROCK);
-	public static final DeferredItem<BlockItem> SOUL_SOIL_ROCK_ITEM = ITEMS.registerSimpleBlockItem(SOUL_SOIL_ROCK);
+	public static DeferredBlock<Rock> registerRock(String name, RockType type) {
+		DeferredBlock<Rock> block = registerBlockWithItem(name, Rock::new, Properties.ofFullCopy(Blocks.POPPY));
+		Rocks.rocksByType.put(type, block);
+		return block;
+	}
 
-	public static final DeferredItem<BlockItem> OAK_STICK_ITEM = ITEMS.registerSimpleBlockItem(OAK_STICK);
-	public static final DeferredItem<BlockItem> SPRUCE_STICK_ITEM = ITEMS.registerSimpleBlockItem(SPRUCE_STICK);
-	public static final DeferredItem<BlockItem> BIRCH_STICK_ITEM = ITEMS.registerSimpleBlockItem(BIRCH_STICK);
-	public static final DeferredItem<BlockItem> ACACIA_STICK_ITEM = ITEMS.registerSimpleBlockItem(ACACIA_STICK);
-	public static final DeferredItem<BlockItem> JUNGLE_STICK_ITEM = ITEMS.registerSimpleBlockItem(JUNGLE_STICK);
-	public static final DeferredItem<BlockItem> DARK_OAK_STICK_ITEM = ITEMS.registerSimpleBlockItem(DARK_OAK_STICK);
-	public static final DeferredItem<BlockItem> MANGROVE_STICK_ITEM = ITEMS.registerSimpleBlockItem(MANGROVE_STICK);
-	public static final DeferredItem<BlockItem> CHERRY_STICK_ITEM = ITEMS.registerSimpleBlockItem(CHERRY_STICK);
-	public static final DeferredItem<BlockItem> BAMBOO_STICK_ITEM = ITEMS.registerSimpleBlockItem(BAMBOO_STICK);
-	public static final DeferredItem<BlockItem> CRIMSON_STICK_ITEM = ITEMS.registerSimpleBlockItem(CRIMSON_STICK);
-	public static final DeferredItem<BlockItem> WARPED_STICK_ITEM = ITEMS.registerSimpleBlockItem(WARPED_STICK);
+	public static DeferredBlock<Stick> registerStick(String name, StickType type) {
+		DeferredBlock<Stick> block = registerBlockWithItem(name, Stick::new, Properties.ofFullCopy(Blocks.POPPY));
+		Rocks.sticksByType.put(type, block);
+		return block;
+	}
 
-	public static final DeferredItem<BlockItem> PINECONE_ITEM = ITEMS.registerSimpleBlockItem(PINECONE);
-	public static final DeferredItem<BlockItem> SEASHELL_ITEM = ITEMS.registerSimpleBlockItem(SEASHELL);
-	public static final DeferredItem<BlockItem> STARFISH_ITEM = ITEMS.registerSimpleBlockItem(STARFISH);
-	public static final DeferredItem<BlockItem> GEYSER_ITEM = ITEMS.registerSimpleBlockItem(GEYSER);
-	public static final DeferredItem<BlockItem> NETHER_GEYSER_ITEM = ITEMS.registerSimpleBlockItem(NETHER_GEYSER);
+	public static <B extends Block> DeferredBlock<B> registerBlockWithItem(String name, Function<Properties, ? extends B> supplier, Properties properties) {
+		DeferredBlock<B> block = BLOCKS.registerBlock(name, supplier, properties);
+		ITEMS.registerSimpleBlockItem(block);
+		return block;
+	}
 
-	public static final DeferredItem<Item> COBBLESTONE_SPLITTER = ITEMS.registerSimpleItem("cobblestone_splitter");
-	public static final DeferredItem<Item> GRANITE_SPLITTER = ITEMS.registerSimpleItem("granite_splitter");
-	public static final DeferredItem<Item> DIORITE_SPLITTER = ITEMS.registerSimpleItem("diorite_splitter");
-	public static final DeferredItem<Item> ANDESITE_SPLITTER = ITEMS.registerSimpleItem("andesite_splitter");
-	public static final DeferredItem<Item> SANDSTONE_SPLITTER = ITEMS.registerSimpleItem("sandstone_splitter");
-	public static final DeferredItem<Item> RED_SANDSTONE_SPLITTER = ITEMS.registerSimpleItem("red_sandstone_splitter");
-	public static final DeferredItem<Item> END_STONE_SPLITTER = ITEMS.registerSimpleItem("end_stone_splitter");
-	public static final DeferredItem<Item> NETHERRACK_SPLITTER = ITEMS.registerSimpleItem("netherrack_splitter");
-	public static final DeferredItem<Item> SOUL_SOIL_SPLITTER = ITEMS.registerSimpleItem("soul_soil_splitter");
+	public static final DeferredItem<Item> COBBLESTONE_SPLITTER = registerSplitter("cobblestone_splitter", RockType.STONE);
+	public static final DeferredItem<Item> GRANITE_SPLITTER = registerSplitter("granite_splitter", RockType.GRANITE);
+	public static final DeferredItem<Item> DIORITE_SPLITTER = registerSplitter("diorite_splitter", RockType.DIORITE);
+	public static final DeferredItem<Item> ANDESITE_SPLITTER = registerSplitter("andesite_splitter", RockType.ANDESITE);
+	public static final DeferredItem<Item> SANDSTONE_SPLITTER = registerSplitter("sandstone_splitter", RockType.SANDSTONE);
+	public static final DeferredItem<Item> RED_SANDSTONE_SPLITTER = registerSplitter("red_sandstone_splitter", RockType.RED_SANDSTONE);
+	public static final DeferredItem<Item> END_STONE_SPLITTER = registerSplitter("end_stone_splitter", RockType.END_STONE);
+	public static final DeferredItem<Item> NETHERRACK_SPLITTER = registerSplitter("netherrack_splitter", RockType.NETHERRACK);
+	public static final DeferredItem<Item> SOUL_SOIL_SPLITTER = registerSplitter("soul_soil_splitter", RockType.SOUL_SOIL);
+	public static final DeferredItem<Item> ICE_SPLITTER = registerSplitter("ice_splitter", RockType.ICE);
 
+	public static DeferredItem<Item> registerSplitter(String name, RockType type) {
+		DeferredItem<Item> item = ITEMS.registerSimpleItem(name);
+		Rocks.splittersByType.put(type, item);
+		return item;
+	}
 	public static final Supplier<CreativeModeTab> ROCKS_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
 			.icon(() -> new ItemStack(RocksRegistry.ROCK.get()))
 			.title(Component.translatable("itemGroup.rocks"))

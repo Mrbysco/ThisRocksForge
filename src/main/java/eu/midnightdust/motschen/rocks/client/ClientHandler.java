@@ -2,10 +2,7 @@ package eu.midnightdust.motschen.rocks.client;
 
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.StarfishVariation;
-import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -13,17 +10,17 @@ import java.util.Objects;
 
 public class ClientHandler {
 	public static void onClientSetup(final FMLClientSetupEvent event) {
-		event.enqueueWork(() -> {
-			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
-					ResourceLocation.withDefaultNamespace("red"), (stack, world, entity, seed) ->
-							matchesVariation(stack, StarfishVariation.RED));
-			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
-					ResourceLocation.withDefaultNamespace("pink"), (stack, world, entity, seed) ->
-							matchesVariation(stack, StarfishVariation.PINK));
-			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
-					ResourceLocation.withDefaultNamespace("orange"), (stack, world, entity, seed) ->
-							matchesVariation(stack, StarfishVariation.ORANGE));
-		});
+//		event.enqueueWork(() -> { TODO: TEST
+//			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
+//					ResourceLocation.withDefaultNamespace("red"), (stack, world, entity, seed) ->
+//							matchesVariation(stack, StarfishVariation.RED));
+//			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
+//					ResourceLocation.withDefaultNamespace("pink"), (stack, world, entity, seed) ->
+//							matchesVariation(stack, StarfishVariation.PINK));
+//			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
+//					ResourceLocation.withDefaultNamespace("orange"), (stack, world, entity, seed) ->
+//							matchesVariation(stack, StarfishVariation.ORANGE));
+//		});
 	}
 
 	private static Integer matchesVariation(ItemStack stack, StarfishVariation variation) {

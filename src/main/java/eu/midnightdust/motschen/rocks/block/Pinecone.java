@@ -2,10 +2,11 @@ package eu.midnightdust.motschen.rocks.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -17,8 +18,8 @@ public class Pinecone extends Block {
 
 	private static final VoxelShape SHAPE;
 
-	public Pinecone() {
-		super(Properties.ofFullCopy(Blocks.POPPY).noOcclusion().sound(SoundType.WOOD));
+	public Pinecone(Properties properties) {
+		super(properties.noOcclusion().sound(SoundType.WOOD));
 		this.registerDefaultState(this.stateDefinition.any());
 	}
 
@@ -31,16 +32,18 @@ public class Pinecone extends Block {
 		SHAPE = box(0, 0, 0, 16, 3, 16);
 	}
 
+	@Override
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
 		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
 	}
 
-	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
-		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
+	@Override
+	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+		return !state.canSurvive(level, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
 	}
 
 	@Override
-	protected boolean propagatesSkylightDown(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+	protected boolean propagatesSkylightDown(BlockState state) {
 		return true;
 	}
 

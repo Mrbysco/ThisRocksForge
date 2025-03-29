@@ -77,6 +77,7 @@ public class NetherGeyser extends BaseEntityBlock implements EntityBlock {
 		SHAPE = box(5, 0, 5, 11, 1, 11);
 	}
 
+	@Override
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
 		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
 	}

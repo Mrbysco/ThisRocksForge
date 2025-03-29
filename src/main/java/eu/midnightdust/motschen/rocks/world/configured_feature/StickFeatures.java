@@ -1,164 +1,88 @@
 package eu.midnightdust.motschen.rocks.world.configured_feature;
 
-import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.StickVariation;
-import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
+import eu.midnightdust.motschen.rocks.util.StickType;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static eu.midnightdust.motschen.rocks.Rocks.STICK_VARIATION;
+import static eu.midnightdust.motschen.rocks.Rocks.sticksByType;
+import static eu.midnightdust.motschen.rocks.util.RegistryUtil.register;
 
 public class StickFeatures {
-	public static final List<PlacementModifier> stickModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+	private static final Map<StickType, ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = new HashMap<>();
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> OAK_STICK_FEATURE = createConfiguredKey("oak_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SPRUCE_STICK_FEATURE = createConfiguredKey("spruce_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> PINECONE_FEATURE = createConfiguredKey("pinecone");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> BIRCH_STICK_FEATURE = createConfiguredKey("birch_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ACACIA_STICK_FEATURE = createConfiguredKey("acacia_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_STICK_FEATURE = createConfiguredKey("jungle_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> DARK_OAK_STICK_FEATURE = createConfiguredKey("dark_oak_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> MANGROVE_STICK_FEATURE = createConfiguredKey("mangrove_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> CHERRY_STICK_FEATURE = createConfiguredKey("cherry_stick");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> BAMBOO_STICK_FEATURE = createConfiguredKey("bamboo_stick");
+	public static List<PlacementModifier> getModifiers(int count, int rarity, Block... groundBlocks) {
+		return List.of(CountPlacement.of(count), RarityFilter.onAverageOnceEvery(rarity),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0),
+						groundBlocks))));
+	}
 
-	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String pName) {
-		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	public static List<PlacementModifier> getNetherModifiers(int count, int rarity, Block... groundBlocks) {
+		return List.of(CountPlacement.of(count), RarityFilter.onAverageOnceEvery(rarity),
+				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0),
+						groundBlocks))));
+	}
+
+	public static void init() {
+		for (StickType type : StickType.values()) {
+			ConfiguredFeature<?, ?> STICK_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+					new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+							.add(sticksByType.get(type).get().defaultBlockState().setValue(STICK_VARIATION, StickVariation.SMALL), 7)
+							.add(sticksByType.get(type).get().defaultBlockState().setValue(STICK_VARIATION, StickVariation.MEDIUM), 5)
+							.add(sticksByType.get(type).get().defaultBlockState().setValue(STICK_VARIATION, StickVariation.LARGE), 1).build()))
+			);
+			CONFIGURED_FEATURES.put(type, STICK_FEATURE);
+		}
 	}
 
 	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-		FeatureUtils.register(context, OAK_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
+		init();
 
-		FeatureUtils.register(context, SPRUCE_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.SPRUCE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.SPRUCE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.SPRUCE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, PINECONE_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.PINECONE.get().defaultBlockState(), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, BIRCH_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.BIRCH_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.BIRCH_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.BIRCH_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, ACACIA_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.ACACIA_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.ACACIA_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.ACACIA_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, JUNGLE_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.JUNGLE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.JUNGLE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.JUNGLE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, DARK_OAK_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.DARK_OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.DARK_OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.DARK_OAK_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, MANGROVE_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.MANGROVE_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, CHERRY_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.CHERRY_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.CHERRY_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.CHERRY_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-
-		FeatureUtils.register(context, BAMBOO_STICK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.BAMBOO_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.SMALL), 7)
-								.add(RocksRegistry.BAMBOO_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.MEDIUM), 5)
-								.add(RocksRegistry.BAMBOO_STICK.get().defaultBlockState().setValue(Rocks.STICK_VARIATION, StickVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
-	}
-
-	public static final ResourceKey<PlacedFeature> PLACED_OAK_STICK_FEATURE = createPlacedFeature("oak_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_SPRUCE_STICK_FEATURE = createPlacedFeature("spruce_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_PINECONE_FEATURE = createPlacedFeature("pinecone");
-	public static final ResourceKey<PlacedFeature> PLACED_BIRCH_STICK_FEATURE = createPlacedFeature("birch_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_ACACIA_STICK_FEATURE = createPlacedFeature("acacia_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_JUNGLE_STICK_FEATURE = createPlacedFeature("jungle_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_DARK_OAK_STICK_FEATURE = createPlacedFeature("dark_oak_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_MANGROVE_STICK_FEATURE = createPlacedFeature("mangrove_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_CHERRY_STICK_FEATURE = createPlacedFeature("cherry_stick");
-	public static final ResourceKey<PlacedFeature> PLACED_BAMBOO_STICK_FEATURE = createPlacedFeature("bamboo_stick");
-
-	public static ResourceKey<PlacedFeature> createPlacedFeature(String pName) {
-		return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+		for (StickType type : StickType.values()) {
+			register(context, type.getName() + "_stick", CONFIGURED_FEATURES.get(type));
+		}
 	}
 
 	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
-		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
-
-		List<PlacementModifier> stickModifiers = new ArrayList<>(StickFeatures.stickModifiers);
-		stickModifiers.add(CountPlacement.of(3));
-
-		PlacementUtils.register(context, PLACED_OAK_STICK_FEATURE, holdergetter.getOrThrow(OAK_STICK_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_SPRUCE_STICK_FEATURE, holdergetter.getOrThrow(SPRUCE_STICK_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_PINECONE_FEATURE, holdergetter.getOrThrow(PINECONE_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_BIRCH_STICK_FEATURE, holdergetter.getOrThrow(BIRCH_STICK_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_ACACIA_STICK_FEATURE, holdergetter.getOrThrow(ACACIA_STICK_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_JUNGLE_STICK_FEATURE, holdergetter.getOrThrow(JUNGLE_STICK_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_DARK_OAK_STICK_FEATURE, holdergetter.getOrThrow(DARK_OAK_STICK_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_MANGROVE_STICK_FEATURE, holdergetter.getOrThrow(MANGROVE_STICK_FEATURE), stickModifiers);
-		PlacementUtils.register(context, PLACED_BAMBOO_STICK_FEATURE, holdergetter.getOrThrow(BAMBOO_STICK_FEATURE), stickModifiers);
-
-		List<PlacementModifier> cherryStickModifiers = new ArrayList<>(StickFeatures.stickModifiers);
-		cherryStickModifiers.add(CountPlacement.of(5)); //More tries to make up for the flowers that spawn in the Cherry Grove
-		PlacementUtils.register(context, PLACED_CHERRY_STICK_FEATURE, holdergetter.getOrThrow(CHERRY_STICK_FEATURE), cherryStickModifiers);
+		for (StickType type : StickType.values()) {
+			PlacedFeature STICK_PLACED_FEATURE = switch (type) {
+				case CRIMSON ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getNetherModifiers(90, 1, Blocks.CRIMSON_NYLIUM));
+				case WARPED ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getNetherModifiers(90, 1, Blocks.WARPED_NYLIUM));
+				case PALE_OAK ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiers(20, 1, Blocks.GRASS_BLOCK, Blocks.PALE_MOSS_BLOCK));
+				case SPRUCE ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiers(3, 1, Blocks.GRASS_BLOCK, Blocks.SNOW_BLOCK, Blocks.PODZOL));
+				default ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiers(3, 1, Blocks.GRASS_BLOCK, Blocks.MUD, Blocks.PODZOL));
+			};
+			register(context, type.getName() + "_stick", STICK_PLACED_FEATURE);
+		}
 	}
 }

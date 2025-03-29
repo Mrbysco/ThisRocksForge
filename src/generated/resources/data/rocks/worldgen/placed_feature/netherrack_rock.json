@@ -1,6 +1,59 @@
 {
-  "feature": "rocks:netherrack_rock",
+  "feature": {
+    "type": "minecraft:simple_block",
+    "config": {
+      "to_place": {
+        "type": "minecraft:weighted_state_provider",
+        "entries": [
+          {
+            "data": {
+              "Name": "rocks:netherrack_rock",
+              "Properties": {
+                "variation": "tiny",
+                "waterlogged": "false"
+              }
+            },
+            "weight": 10
+          },
+          {
+            "data": {
+              "Name": "rocks:netherrack_rock",
+              "Properties": {
+                "variation": "small",
+                "waterlogged": "false"
+              }
+            },
+            "weight": 7
+          },
+          {
+            "data": {
+              "Name": "rocks:netherrack_rock",
+              "Properties": {
+                "variation": "medium",
+                "waterlogged": "false"
+              }
+            },
+            "weight": 5
+          },
+          {
+            "data": {
+              "Name": "rocks:netherrack_rock",
+              "Properties": {
+                "variation": "large",
+                "waterlogged": "false"
+              }
+            },
+            "weight": 1
+          }
+        ]
+      }
+    }
+  },
   "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 90
+    },
     {
       "type": "minecraft:rarity_filter",
       "chance": 1
@@ -13,10 +66,10 @@
       "height": {
         "type": "minecraft:uniform",
         "max_inclusive": {
-          "below_top": 4
+          "below_top": 0
         },
         "min_inclusive": {
-          "above_bottom": 4
+          "above_bottom": 0
         }
       }
     },
@@ -24,8 +77,29 @@
       "type": "minecraft:biome"
     },
     {
-      "type": "minecraft:count",
-      "count": 90
+      "type": "minecraft:block_predicate_filter",
+      "predicate": {
+        "type": "minecraft:all_of",
+        "predicates": [
+          {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:air"
+          },
+          {
+            "type": "minecraft:matching_blocks",
+            "blocks": [
+              "minecraft:netherrack",
+              "minecraft:warped_nylium",
+              "minecraft:crimson_nylium"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ]
+      }
     }
   ]
 }

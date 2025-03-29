@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,8 +14,8 @@ import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -39,8 +39,8 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 	private static final EnumProperty<StarfishVariation> STARFISH_VARIATION = Rocks.STARFISH_VARIATION;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	public Starfish() {
-		super(Properties.ofFullCopy(Blocks.POPPY).noOcclusion().sound(SoundType.CORAL_BLOCK));
+	public Starfish(Properties properties) {
+		super(properties.noOcclusion().sound(SoundType.CORAL_BLOCK));
 		this.registerDefaultState(this.stateDefinition.any().setValue(STARFISH_VARIATION, StarfishVariation.RED).setValue(WATERLOGGED, false));
 	}
 
@@ -57,7 +57,7 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
 		ItemStack stack = new ItemStack(this);
 		stack.applyComponents(DataComponentMap.builder()
 				.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY
@@ -65,7 +65,8 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 		return stack;
 	}
 
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	@Override
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (player.isCreative()) {
 			if (state.getValue(STARFISH_VARIATION) == StarfishVariation.RED) {
 				level.setBlockAndUpdate(pos, state.setValue(STARFISH_VARIATION, StarfishVariation.PINK));
@@ -94,12 +95,14 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 		SHAPE = box(0, 0, 0, 16, 1, 16);
 	}
 
+	@Override
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
 		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
 	}
 
-	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
-		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
+	@Override
+	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+		return !state.canSurvive(level, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
 	}
 
 	@Override

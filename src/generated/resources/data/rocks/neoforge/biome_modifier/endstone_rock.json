@@ -1,9 +1,0 @@
-{
-  "type": "rocks:add_features_with_blacklist",
-  "blacklist": [],
-  "features": "rocks:endstone_rock",
-  "step": "top_layer_modification",
-  "whitelist": [
-    "#minecraft:is_end"
-  ]
-}

@@ -4,14 +4,14 @@ import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.SeashellVariation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -35,8 +35,8 @@ public class Seashell extends Block implements SimpleWaterloggedBlock {
 	private static final EnumProperty<SeashellVariation> SEASHELL_VARIATION = Rocks.SEASHELL_VARIATION;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	public Seashell() {
-		super(Properties.ofFullCopy(Blocks.POPPY).noOcclusion().sound(SoundType.STONE));
+	public Seashell(Properties properties) {
+		super(properties.noOcclusion().sound(SoundType.STONE));
 		this.registerDefaultState(this.stateDefinition.any().setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, false));
 	}
 
@@ -52,16 +52,17 @@ public class Seashell extends Block implements SimpleWaterloggedBlock {
 				.setValue(SEASHELL_VARIATION, SeashellVariation.PINK).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 	}
 
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	@Override
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (player.isCreative()) {
 			if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.YELLOW) {
-				world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.WHITE));
+				level.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.WHITE));
 			}
 			if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.WHITE) {
-				world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.PINK));
+				level.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.PINK));
 			}
 			if (state.getValue(SEASHELL_VARIATION) == SeashellVariation.PINK) {
-				world.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.YELLOW));
+				level.setBlockAndUpdate(pos, state.setValue(SEASHELL_VARIATION, SeashellVariation.YELLOW));
 			}
 			return InteractionResult.SUCCESS;
 		} else return InteractionResult.FAIL;
@@ -81,12 +82,14 @@ public class Seashell extends Block implements SimpleWaterloggedBlock {
 		SHAPE = box(0, 0, 0, 16, 3, 16);
 	}
 
+	@Override
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
 		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
 	}
 
-	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
-		return !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, newState, world, pos, posFrom);
+	@Override
+	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+		return !state.canSurvive(level, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
 	}
 
 	@Override

@@ -1,166 +1,138 @@
 package eu.midnightdust.motschen.rocks.world.configured_feature;
 
-import com.google.common.collect.ImmutableList;
 import eu.midnightdust.motschen.rocks.Rocks;
 import eu.midnightdust.motschen.rocks.blockstates.RockVariation;
-import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
+import eu.midnightdust.motschen.rocks.util.RockType;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static eu.midnightdust.motschen.rocks.Rocks.ROCK_VARIATION;
+import static eu.midnightdust.motschen.rocks.Rocks.rocksByType;
+import static eu.midnightdust.motschen.rocks.util.RegistryUtil.register;
 
 public class RockFeatures {
-	public static final List<PlacementModifier> rockModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+	private static final Map<RockType, ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = new HashMap<>();
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ROCK_FEATURE = createConfiguredKey("rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> GRANITE_ROCK_FEATURE = createConfiguredKey("granite_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> DIORITE_ROCK_FEATURE = createConfiguredKey("diorite_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ANDESITE_ROCK_FEATURE = createConfiguredKey("andesite_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SAND_ROCK_FEATURE = createConfiguredKey("sand_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> RED_SAND_ROCK_FEATURE = createConfiguredKey("red_sand_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> END_STONE_ROCK_FEATURE = createConfiguredKey("endstone_rock");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> GRAVEL_ROCK_FEATURE = createConfiguredKey("gravel_rock");
+	public static List<PlacementModifier> getModifiers(int count, int rarity, Block... groundBlocks) {
+		return List.of(CountPlacement.of(count), RarityFilter.onAverageOnceEvery(rarity),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), groundBlocks))));
+	}
 
-	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String pName) {
-		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+	public static List<PlacementModifier> getModifiersInvertedGroundCheck(int count, int rarity, Block... groundBlocks) {
+		return List.of(CountPlacement.of(count), RarityFilter.onAverageOnceEvery(rarity),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.not(BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), groundBlocks)))));
+	}
+
+	public static List<PlacementModifier> getNetherModifiers(int count, int rarity, Block... groundBlocks) {
+		return List.of(CountPlacement.of(count), RarityFilter.onAverageOnceEvery(rarity),
+				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), groundBlocks))));
+	}
+
+	public static List<PlacementModifier> getEndModifiers(int count, int rarity, Block... groundBlocks) {
+		return List.of(CountPlacement.of(count), RarityFilter.onAverageOnceEvery(rarity),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), groundBlocks))));
+	}
+
+	public static ConfiguredFeature<?, ?> ROCK_MIX_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+			new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+					.add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.TINY), 10).add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.SMALL), 7)
+					.add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.MEDIUM), 5).add(rocksByType.get(RockType.GRANITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.LARGE), 1)
+					.add(rocksByType.get(RockType.DIORITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.TINY), 10).add(rocksByType.get(RockType.DIORITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.SMALL), 7)
+					.add(rocksByType.get(RockType.DIORITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.MEDIUM), 5).add(rocksByType.get(RockType.DIORITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.LARGE), 1)
+					.add(rocksByType.get(RockType.ANDESITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.TINY), 10).add(rocksByType.get(RockType.ANDESITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.SMALL), 7)
+					.add(rocksByType.get(RockType.ANDESITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.MEDIUM), 5).add(rocksByType.get(RockType.ANDESITE).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.LARGE), 1)
+					.build()))
+	);
+	public static ConfiguredFeature<?, ?> NETHER_GRAVEL_ROCK_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+			new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+					.add(rocksByType.get(RockType.GRAVEL).get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
+					.add(rocksByType.get(RockType.GRAVEL).get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
+					.add(rocksByType.get(RockType.GRAVEL).get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
+					.add(rocksByType.get(RockType.GRAVEL).get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1).build()))
+	);
+
+	public static PlacedFeature ROCK_MIX_PLACED_FEATURE = new PlacedFeature(Holder.direct(ROCK_MIX_FEATURE), getModifiersInvertedGroundCheck(3, 1, Blocks.ICE, Blocks.PACKED_ICE, Blocks.SAND, Blocks.RED_SAND, Blocks.END_STONE));
+	public static PlacedFeature NETHER_GRAVEL_ROCK_PLACED_FEATURE = new PlacedFeature(Holder.direct(NETHER_GRAVEL_ROCK_FEATURE), getNetherModifiers(30, 1, Blocks.GRAVEL));
+
+	public static void init() {
+		for (RockType type : RockType.values()) {
+			ConfiguredFeature<?, ?> ROCK_FEATURE = new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+					new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+							.add(rocksByType.get(type).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.TINY), 10)
+							.add(rocksByType.get(type).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.SMALL), 7)
+							.add(rocksByType.get(type).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.MEDIUM), 5)
+							.add(rocksByType.get(type).get().defaultBlockState().setValue(ROCK_VARIATION, RockVariation.LARGE), 1)
+							.build()))
+			);
+			CONFIGURED_FEATURES.put(type, ROCK_FEATURE);
+		}
 	}
 
 	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-		FeatureUtils.register(context, ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.not(
-								BlockPredicate.matchesBlocks(
-										new BlockPos(0, -1, 0), ImmutableList.of(Blocks.ICE, Blocks.SAND, Blocks.RED_SAND)))))));
+		init();
 
-		FeatureUtils.register(context, GRANITE_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.GRANITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.GRANITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.GRANITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.GRANITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(
-								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.GRANITE))))));
+		register(context, "rock_mix", ROCK_MIX_FEATURE);
+		register(context, "nether_gravel_rock", NETHER_GRAVEL_ROCK_FEATURE);
 
-		FeatureUtils.register(context, DIORITE_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.DIORITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.DIORITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.DIORITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.DIORITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(
-								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.DIORITE))))));
-
-		FeatureUtils.register(context, ANDESITE_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.ANDESITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.ANDESITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.ANDESITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.ANDESITE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(
-								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.ANDESITE))))));
-
-		FeatureUtils.register(context, SAND_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(
-								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.SAND, Blocks.SANDSTONE))))));
-
-		FeatureUtils.register(context, RED_SAND_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.RED_SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.RED_SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.RED_SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.RED_SAND_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(
-								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.RED_SAND, Blocks.RED_SANDSTONE))))));
-
-		FeatureUtils.register(context, END_STONE_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.END_STONE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.END_STONE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.END_STONE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.END_STONE_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(
-								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.END_STONE))))));
-
-		FeatureUtils.register(context, GRAVEL_ROCK_FEATURE,
-				Feature.RANDOM_PATCH, new RandomPatchConfiguration(128, 0, 0, PlacementUtils.filtered(Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.TINY), 10)
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.SMALL), 7)
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.MEDIUM), 5)
-								.add(RocksRegistry.GRAVEL_ROCK.get().defaultBlockState().setValue(Rocks.ROCK_VARIATION, RockVariation.LARGE), 1))),
-						BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE, BlockPredicate.matchesBlocks(
-								new BlockPos(0, -1, 0), ImmutableList.of(Blocks.GRAVEL))))));
-	}
-
-	public static final ResourceKey<PlacedFeature> PLACED_ROCK_FEATURE = createPlacedFeature("rock");
-	public static final ResourceKey<PlacedFeature> PLACED_GRANITE_ROCK_FEATURE = createPlacedFeature("granite_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_DIORITE_ROCK_FEATURE = createPlacedFeature("diorite_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_ANDESITE_ROCK_FEATURE = createPlacedFeature("andesite_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_SAND_ROCK_FEATURE = createPlacedFeature("sand_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_RED_SAND_ROCK_FEATURE = createPlacedFeature("red_sand_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_END_STONE_ROCK_FEATURE = createPlacedFeature("endstone_rock");
-	public static final ResourceKey<PlacedFeature> PLACED_GRAVEL_ROCK_FEATURE = createPlacedFeature("gravel_rock");
-
-	public static ResourceKey<PlacedFeature> createPlacedFeature(String pName) {
-		return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Rocks.MOD_ID, pName));
+		for (RockType type : RockType.values()) {
+			register(context, type.getName(), CONFIGURED_FEATURES.get(type));
+		}
 	}
 
 	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
-		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
+		register(context, "rock_mix", ROCK_MIX_PLACED_FEATURE);
+		register(context, "nether_gravel_rock", NETHER_GRAVEL_ROCK_PLACED_FEATURE);
 
-		List<PlacementModifier> rockModifiers = new ArrayList<>(RockFeatures.rockModifiers);
-		rockModifiers.add(CountPlacement.of(3));
+		for (RockType type : RockType.values()) {
+			PlacedFeature ROCK_PLACED_FEATURE = switch (type) {
+				case STONE ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiersInvertedGroundCheck(3, 1, Blocks.ICE, Blocks.PACKED_ICE, Blocks.SAND, Blocks.RED_SAND, Blocks.END_STONE));
+				case SANDSTONE ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiers(3, 1, Blocks.SAND, Blocks.SANDSTONE));
+				case RED_SANDSTONE ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiers(7, 1, Blocks.RED_SAND, Blocks.RED_SANDSTONE));
+				case ICE ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiers(3, 5, Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE));
 
-		PlacementUtils.register(context, PLACED_ROCK_FEATURE, holdergetter.getOrThrow(ROCK_FEATURE), rockModifiers);
-		PlacementUtils.register(context, PLACED_GRANITE_ROCK_FEATURE, holdergetter.getOrThrow(GRANITE_ROCK_FEATURE), rockModifiers);
-		PlacementUtils.register(context, PLACED_DIORITE_ROCK_FEATURE, holdergetter.getOrThrow(DIORITE_ROCK_FEATURE), rockModifiers);
-		PlacementUtils.register(context, PLACED_ANDESITE_ROCK_FEATURE, holdergetter.getOrThrow(ANDESITE_ROCK_FEATURE), rockModifiers);
-		PlacementUtils.register(context, PLACED_SAND_ROCK_FEATURE, holdergetter.getOrThrow(SAND_ROCK_FEATURE), rockModifiers);
+				case NETHERRACK ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getNetherModifiers(90, 1, Blocks.NETHERRACK, Blocks.WARPED_NYLIUM, Blocks.CRIMSON_NYLIUM));
+				case SOUL_SOIL ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getNetherModifiers(60, 1, Blocks.SOUL_SOIL, Blocks.SOUL_SAND));
 
-		List<PlacementModifier> redSandModifiers = new ArrayList<>(RockFeatures.rockModifiers);
-		rockModifiers.add(CountPlacement.of(7));
-		PlacementUtils.register(context, PLACED_RED_SAND_ROCK_FEATURE, holdergetter.getOrThrow(RED_SAND_ROCK_FEATURE), redSandModifiers);
+				case END_STONE ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getEndModifiers(3, 1, type.getStoneBlock()));
 
-		PlacementUtils.register(context, PLACED_END_STONE_ROCK_FEATURE, holdergetter.getOrThrow(END_STONE_ROCK_FEATURE), rockModifiers);
-		PlacementUtils.register(context, PLACED_GRAVEL_ROCK_FEATURE, holdergetter.getOrThrow(GRAVEL_ROCK_FEATURE), rockModifiers);
+				default ->
+						new PlacedFeature(Holder.direct(CONFIGURED_FEATURES.get(type)), getModifiers(3, 1, type.getStoneBlock()));
+			};
+			register(context, type.getName(), ROCK_PLACED_FEATURE);
+		}
 
 	}
 }

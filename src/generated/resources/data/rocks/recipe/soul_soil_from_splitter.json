@@ -1,19 +1,11 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
+  "category": "building",
   "ingredients": [
-    {
-      "item": "rocks:soul_soil_splitter"
-    },
-    {
-      "item": "rocks:soul_soil_splitter"
-    },
-    {
-      "item": "rocks:soul_soil_splitter"
-    },
-    {
-      "item": "rocks:soul_soil_splitter"
-    }
+    "rocks:soul_soil_splitter",
+    "rocks:soul_soil_splitter",
+    "rocks:soul_soil_splitter",
+    "rocks:soul_soil_splitter"
   ],
   "result": {
     "count": 1,

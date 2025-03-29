@@ -4,6 +4,7 @@
   "features": "rocks:snowy_geyser",
   "step": "top_layer_modification",
   "whitelist": [
-    "#c:is_snowy"
+    "#c:is_snowy",
+    "#minecraft:has_structure/igloo"
   ]
 }

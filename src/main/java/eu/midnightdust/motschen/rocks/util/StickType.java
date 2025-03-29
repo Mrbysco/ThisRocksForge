@@ -1,0 +1,47 @@
+package eu.midnightdust.motschen.rocks.util;
+
+import eu.midnightdust.motschen.rocks.Rocks;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+public enum StickType {
+	OAK("oak", Blocks.OAK_LOG), SPRUCE("spruce", Blocks.SPRUCE_LOG), BIRCH("birch", Blocks.BIRCH_LOG),
+	JUNGLE("jungle", Blocks.JUNGLE_LOG), ACACIA("acacia", Blocks.ACACIA_LOG), DARK_OAK("dark_oak", Blocks.DARK_OAK_LOG),
+	CHERRY("cherry", Blocks.CHERRY_LOG), MANGROVE("mangrove", Blocks.MANGROVE_LOG), PALE_OAK("pale_oak", Blocks.PALE_OAK_LOG),
+
+	BAMBOO("bamboo", Blocks.BAMBOO_BLOCK), WARPED("warped", Blocks.WARPED_STEM), CRIMSON("crimson", Blocks.CRIMSON_STEM);
+
+	private final String name;
+	private final Block baseBlock;
+
+	StickType(String name, Block baseBlock) {
+		this.name = name;
+		this.baseBlock = baseBlock;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public Block getBaseBlock() {
+		return baseBlock;
+	}
+
+	public ResourceLocation[] getVariations() {
+		var variations = new ResourceLocation[3];
+		variations[0] = Rocks.modLoc(name + "_stick_small");
+		variations[1] = Rocks.modLoc(name + "_stick_medium");
+		variations[2] = Rocks.modLoc(name + "_stick_large");
+		return variations;
+	}
+
+	public static StickType fromBlockName(String name) {
+		return Arrays.stream(StickType.values()).filter(woodType -> Objects.equals(woodType.getName(), name
+				.replace("block.rocks.", "").replace("_stick", "")
+		)).findFirst().orElse(StickType.OAK);
+	}
+}

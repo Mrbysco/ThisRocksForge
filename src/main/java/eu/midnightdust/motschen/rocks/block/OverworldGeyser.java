@@ -11,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
@@ -38,7 +37,7 @@ public class OverworldGeyser extends BaseEntityBlock implements EntityBlock {
 	public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
 	public OverworldGeyser(Properties properties) {
-		super(Properties.ofFullCopy(Blocks.STONE).strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
+		super(properties.strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
 		this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false).setValue(SNOWY, false));
 	}
 
@@ -90,6 +89,7 @@ public class OverworldGeyser extends BaseEntityBlock implements EntityBlock {
 		SNOWY_SHAPE = snowy;
 	}
 
+	@Override
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
 		return world.getBlockState(pos.below()).isFaceSturdy(world, pos, Direction.UP);
 	}

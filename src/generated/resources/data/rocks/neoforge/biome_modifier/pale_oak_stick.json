@@ -1,0 +1,9 @@
+{
+  "type": "rocks:add_features_with_blacklist",
+  "blacklist": [],
+  "features": "rocks:pale_oak_stick",
+  "step": "top_layer_modification",
+  "whitelist": [
+    "#c:is_pale_garden"
+  ]
+}

@@ -23,7 +23,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import org.slf4j.Logger;
@@ -49,8 +48,6 @@ public class Rocks {
 		container.registerConfig(ModConfig.Type.COMMON, RocksConfig.commonSpec);
 		eventBus.register(RocksConfig.class);
 
-		eventBus.addListener(this::setup);
-
 		RocksRegistry.BLOCKS.register(eventBus);
 		RocksRegistry.ITEMS.register(eventBus);
 		RocksRegistry.CREATIVE_MODE_TABS.register(eventBus);
@@ -61,11 +58,6 @@ public class Rocks {
 		if (dist.isClient()) {
 			eventBus.addListener(ClientHandler::onClientSetup);
 		}
-	}
-
-	private void setup(final FMLCommonSetupEvent event) {
-//		RockFeatures.init();
-//		StickFeatures.init();
 	}
 
 	public static ResourceLocation modLoc(String path) {

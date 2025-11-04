@@ -33,7 +33,7 @@ public class NetherGeyser extends BaseEntityBlock implements EntityBlock {
 	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
 	public NetherGeyser(Properties properties) {
-		super(properties.strength(10).noCollission().noOcclusion().sound(SoundType.STONE));
+		super(properties.strength(10).noCollision().noOcclusion().sound(SoundType.STONE));
 		this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false));
 	}
 

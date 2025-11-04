@@ -58,26 +58,26 @@ public class RocksRegistry {
 	public static final DeferredBlock<Stick> CRIMSON_STICK = registerStick("crimson_stick", StickType.CRIMSON);
 	public static final DeferredBlock<Stick> WARPED_STICK = registerStick("warped_stick", StickType.WARPED);
 
-	public static final DeferredBlock<Pinecone> PINECONE = registerBlockWithItem("pinecone", Pinecone::new, Properties.ofFullCopy(Blocks.POPPY));
-	public static final DeferredBlock<Seashell> SEASHELL = registerBlockWithItem("seashell", Seashell::new, Properties.ofFullCopy(Blocks.POPPY));
-	public static final DeferredBlock<Starfish> STARFISH = registerBlockWithItem("starfish", Starfish::new, Properties.ofFullCopy(Blocks.POPPY));
-	public static final DeferredBlock<OverworldGeyser> GEYSER = registerBlockWithItem("geyser", OverworldGeyser::new, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
-	public static final DeferredBlock<NetherGeyser> NETHER_GEYSER = registerBlockWithItem("nether_geyser", NetherGeyser::new, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
+	public static final DeferredBlock<Pinecone> PINECONE = registerBlockWithItem("pinecone", Pinecone::new, () -> Properties.ofFullCopy(Blocks.POPPY));
+	public static final DeferredBlock<Seashell> SEASHELL = registerBlockWithItem("seashell", Seashell::new, () -> Properties.ofFullCopy(Blocks.POPPY));
+	public static final DeferredBlock<Starfish> STARFISH = registerBlockWithItem("starfish", Starfish::new, () -> Properties.ofFullCopy(Blocks.POPPY));
+	public static final DeferredBlock<OverworldGeyser> GEYSER = registerBlockWithItem("geyser", OverworldGeyser::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
+	public static final DeferredBlock<NetherGeyser> NETHER_GEYSER = registerBlockWithItem("nether_geyser", NetherGeyser::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
 
 	public static DeferredBlock<Rock> registerRock(String name, RockType type) {
-		DeferredBlock<Rock> block = registerBlockWithItem(name, Rock::new, Properties.ofFullCopy(Blocks.POPPY));
+		DeferredBlock<Rock> block = registerBlockWithItem(name, Rock::new, () -> Properties.ofFullCopy(Blocks.POPPY));
 		Rocks.rocksByType.put(type, block);
 		return block;
 	}
 
 	public static DeferredBlock<Stick> registerStick(String name, StickType type) {
-		DeferredBlock<Stick> block = registerBlockWithItem(name, Stick::new, Properties.ofFullCopy(Blocks.POPPY));
+		DeferredBlock<Stick> block = registerBlockWithItem(name, Stick::new, () -> Properties.ofFullCopy(Blocks.POPPY));
 		Rocks.sticksByType.put(type, block);
 		return block;
 	}
 
-	public static <B extends Block> DeferredBlock<B> registerBlockWithItem(String name, Function<Properties, ? extends B> supplier, Properties properties) {
-		DeferredBlock<B> block = BLOCKS.registerBlock(name, supplier, properties);
+	public static <B extends Block> DeferredBlock<B> registerBlockWithItem(String name, Function<Properties, ? extends B> supplier, Supplier<Properties> propertiesSupplier) {
+		DeferredBlock<B> block = BLOCKS.registerBlock(name, supplier, propertiesSupplier);
 		ITEMS.registerSimpleBlockItem(block);
 		return block;
 	}

@@ -26,7 +26,7 @@ public class RocksDatagen {
 		generator.addProvider(true, new RocksRecipeProvider.Runner(packOutput, lookupProvider));
 		generator.addProvider(true, new RocksBiomes(packOutput, lookupProvider));
 
-		generator.addProvider(true, new RocksDatagenProvider(
+		generator.addProvider(true, new RocksDatapackProvider(
 				packOutput,
 				event.getLookupProvider(),
 				Set.of("rocks")

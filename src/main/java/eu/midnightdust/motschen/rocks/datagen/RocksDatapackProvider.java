@@ -15,7 +15,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class RocksDatagenProvider extends DatapackBuiltinEntriesProvider {
+public class RocksDatapackProvider extends DatapackBuiltinEntriesProvider {
 	public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
 			.add(Registries.CONFIGURED_FEATURE, context -> {
 				MiscFeatures.configuredBootstrap(context);
@@ -31,7 +31,7 @@ public class RocksDatagenProvider extends DatapackBuiltinEntriesProvider {
 			})
 			.add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, RocksBiomeModifiers::bootstrap);
 
-	public RocksDatagenProvider(PackOutput output, CompletableFuture<Provider> registries, Set<String> modIds) {
+	public RocksDatapackProvider(PackOutput output, CompletableFuture<Provider> registries, Set<String> modIds) {
 		super(output, registries, BUILDER, modIds);
 	}
 }

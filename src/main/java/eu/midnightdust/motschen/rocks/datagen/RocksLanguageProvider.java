@@ -19,6 +19,7 @@ public class RocksLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
+		add("itemGroup.rocks", "This Rocks");
 		createRepeatedTranslations(" Rock", " Fragment", " Stick");
 
 		addBlock(RocksRegistry.GEYSER, "Geyser");

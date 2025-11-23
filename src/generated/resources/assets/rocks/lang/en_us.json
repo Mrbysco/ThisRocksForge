@@ -36,5 +36,6 @@
   "item.rocks.netherrack_splitter": "Netherrack Fragment",
   "item.rocks.red_sandstone_splitter": "Red Sandstone Fragment",
   "item.rocks.sandstone_splitter": "Sandstone Fragment",
-  "item.rocks.soul_soil_splitter": "Soul Soil Fragment"
+  "item.rocks.soul_soil_splitter": "Soul Soil Fragment",
+  "itemGroup.rocks": "This Rocks"
 }

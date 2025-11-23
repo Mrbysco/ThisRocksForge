@@ -19,6 +19,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.Vec3i;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.BlockLoot;
@@ -27,6 +28,7 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.tags.BiomeTagsProvider;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
@@ -40,10 +42,15 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
+import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTable.Builder;
@@ -107,16 +114,17 @@ public class RocksDatagen {
 		map.putAll(generateConfiguredFeature(ops, MiscFeatures.UNDERWATER_SEASHELL_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), miscModifiers));
 		map.putAll(generateConfiguredFeature(ops, MiscFeatures.SNOWY_GEYSER_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), miscModifiers));
 
-		List<PlacementModifier> netherModifiers = new ArrayList<>(NetherFeatures.netherModifiers);
-		netherModifiers.add(CountPlacement.of(90));
-		List<PlacementModifier> geyserModifiers = new ArrayList<>(NetherFeatures.netherModifiers);
-		geyserModifiers.add(CountPlacement.of(30));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHERRACK_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.SOUL_SOIL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHER_GRAVEL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
+		List<PlacementModifier> geyserModifiers = List.of(CountPlacement.of(15), RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(),
+				PlacementUtils.FULL_RANGE, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE,
+						BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), ImmutableList.of(Blocks.NETHERRACK))))
+		);
+		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHERRACK_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), NetherFeatures.getNetherModifiers(90, 1, Blocks.NETHERRACK, Blocks.WARPED_NYLIUM, Blocks.CRIMSON_NYLIUM)));
+		map.putAll(generateConfiguredFeature(ops, NetherFeatures.SOUL_SOIL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), NetherFeatures.getNetherModifiers(60, 1, Blocks.SOUL_SOIL, Blocks.SOUL_SAND)));
+		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHER_GRAVEL_ROCK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), NetherFeatures.getNetherModifiers(30, 1, Blocks.GRAVEL)));
 		map.putAll(generateConfiguredFeature(ops, NetherFeatures.NETHER_GEYSER_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), geyserModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.WARPED_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
-		map.putAll(generateConfiguredFeature(ops, NetherFeatures.CRIMSON_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), netherModifiers));
+		map.putAll(generateConfiguredFeature(ops, NetherFeatures.WARPED_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), StickFeatures.getNetherModifiers(90, 1, Blocks.WARPED_NYLIUM)));
+		map.putAll(generateConfiguredFeature(ops, NetherFeatures.CRIMSON_STICK_FEATURE.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get(), StickFeatures.getNetherModifiers(90, 1, Blocks.CRIMSON_NYLIUM)));
 
 		List<PlacementModifier> rockModifiers = new ArrayList<>(RockFeatures.rockModifiers);
 		rockModifiers.add(CountPlacement.of(3));

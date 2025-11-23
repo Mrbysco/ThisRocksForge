@@ -5,18 +5,23 @@ import eu.midnightdust.motschen.rocks.blockstates.RockVariation;
 import eu.midnightdust.motschen.rocks.blockstates.StickVariation;
 import eu.midnightdust.motschen.rocks.registry.RocksRegistry;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
@@ -24,7 +29,12 @@ import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import java.util.List;
 
 public class NetherFeatures {
-	public static List<PlacementModifier> netherModifiers = List.of(RarityFilter.onAverageOnceEvery(1), InSquarePlacement.spread(), PlacementUtils.RANGE_4_4, BiomeFilter.biome());
+	public static List<PlacementModifier> getNetherModifiers(int count, int rarity, Block... groundBlocks) {
+		return List.of(CountPlacement.of(count), RarityFilter.onAverageOnceEvery(rarity),
+				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome(),
+				BlockPredicateFilter.forPredicate(BlockPredicate.allOf(BlockPredicate.ONLY_IN_AIR_PREDICATE,
+						BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), groundBlocks))));
+	}
 
 	public static final Holder<ConfiguredFeature<RandomPatchConfiguration, ?>> NETHERRACK_ROCK_FEATURE = FeatureUtils.register(new ResourceLocation(Rocks.MOD_ID, "netherrack_rock").toString(),
 			Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,

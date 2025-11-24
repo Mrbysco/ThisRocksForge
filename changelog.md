@@ -1,3 +1,2 @@
-* Add Mangrove Sticks
-* Add config options for Geyser levitation and Nether Geyser damage
-* Allow Sticks and Stones to get waterlogged
+* Backport newer nether worldgen to 1.19.2
+* Make the geysers breakable with a pickaxe

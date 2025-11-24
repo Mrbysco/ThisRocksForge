@@ -28,12 +28,14 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.tags.BiomeTagsProvider;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -95,6 +97,7 @@ public class RocksDatagen {
 		if (event.includeServer()) {
 			generator.addProvider(event.includeServer(), new Loots(generator));
 			generator.addProvider(event.includeServer(), new Recipes(generator));
+			generator.addProvider(event.includeServer(), new RocksBlockTags(generator, helper));
 			generator.addProvider(event.includeServer(), new RocksBiomeTags(generator, helper));
 
 			generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(generator, helper, Rocks.MOD_ID, ops, Registry.PLACED_FEATURE_REGISTRY, getConfiguredFeatures(ops)));
@@ -317,6 +320,17 @@ public class RocksDatagen {
 		}
 	}
 
+	public static class RocksBlockTags extends BlockTagsProvider {
+
+		public RocksBlockTags(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper) {
+			super(generator, Rocks.MOD_ID, existingFileHelper);
+		}
+
+		@Override
+		protected void addTags() {
+			this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(RocksRegistry.GEYSER.get(), RocksRegistry.NETHER_GEYSER.get());
+		}
+	}
 
 	public static class RocksBiomeTags extends BiomeTagsProvider {
 		public RocksBiomeTags(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper) {

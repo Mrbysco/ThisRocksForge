@@ -7,7 +7,7 @@ import eu.midnightdust.motschen.rocks.util.StickType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -45,8 +45,8 @@ public class RocksLanguageProvider extends LanguageProvider {
 		for (StickType type : StickType.values()) {
 			Block block = BuiltInRegistries.BLOCK.getValue(Rocks.modLoc(type.getName() + "_stick"));
 			if (type.getBaseBlock() instanceof Block logBlock &&
-					BuiltInRegistries.BLOCK.getValue(ResourceLocation.withDefaultNamespace(type.getName() + "_planks")) instanceof Block plankBlock &&
-					BuiltInRegistries.BLOCK.getValue(ResourceLocation.withDefaultNamespace(type.getName() + "_stairs")) instanceof Block stairBlock) {
+					BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(type.getName() + "_planks")) instanceof Block plankBlock &&
+					BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(type.getName() + "_stairs")) instanceof Block stairBlock) {
 				String logTranslation = I18n.get(logBlock.getDescriptionId());
 				String plankTranslation = I18n.get(plankBlock.getDescriptionId());
 				String stairTranslation = I18n.get(stairBlock.getDescriptionId());

@@ -1,7 +1,7 @@
 package eu.midnightdust.motschen.rocks.util;
 
 import eu.midnightdust.motschen.rocks.Rocks;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -31,8 +31,8 @@ public enum StickType {
 		return baseBlock;
 	}
 
-	public ResourceLocation[] getVariations() {
-		var variations = new ResourceLocation[3];
+	public Identifier[] getVariations() {
+		var variations = new Identifier[3];
 		variations[0] = Rocks.modLoc(name + "_stick_small");
 		variations[1] = Rocks.modLoc(name + "_stick_medium");
 		variations[2] = Rocks.modLoc(name + "_stick_large");

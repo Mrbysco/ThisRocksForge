@@ -8,7 +8,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -23,7 +23,7 @@ public class RocksRecipeProvider extends RecipeProvider {
 	@Override
 	protected void buildRecipes() {
 		Rocks.splittersByType.forEach(((rockType, splitter) -> {
-			shapeless(RecipeCategory.BUILDING_BLOCKS, BuiltInRegistries.BLOCK.getValue(ResourceLocation.withDefaultNamespace(rockType.name().toLowerCase())).asItem())
+			shapeless(RecipeCategory.BUILDING_BLOCKS, BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(rockType.name().toLowerCase())).asItem())
 					.requires(splitter, 4).unlockedBy(RecipeProvider.getHasName(splitter), this.has(splitter))
 					.save(this.output, "rocks:" + rockType.name().toLowerCase() + "_from_splitter");
 		}));

@@ -2,7 +2,7 @@ package eu.midnightdust.motschen.rocks.util;
 
 import eu.midnightdust.motschen.rocks.Rocks;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
@@ -23,16 +23,16 @@ public enum RockType {
 		return this.name;
 	}
 
-	public ResourceLocation getStoneId() {
-		return ResourceLocation.withDefaultNamespace(this.toString().toLowerCase());
+	public Identifier getStoneId() {
+		return Identifier.withDefaultNamespace(this.toString().toLowerCase());
 	}
 
 	public Block getStoneBlock() {
 		return BuiltInRegistries.BLOCK.getValue(getStoneId());
 	}
 
-	public ResourceLocation[] getVariations() {
-		var variations = new ResourceLocation[4];
+	public Identifier[] getVariations() {
+		var variations = new Identifier[4];
 		variations[0] = Rocks.modLoc(name + "_tiny");
 		variations[1] = Rocks.modLoc(name + "_small");
 		variations[2] = Rocks.modLoc(name + "_medium");
@@ -67,9 +67,9 @@ public enum RockType {
 			return splitterName;
 		}
 
-		public ResourceLocation getStoneId() {
-			if (type == STONE) return ResourceLocation.withDefaultNamespace("cobblestone");
-			return ResourceLocation.withDefaultNamespace(type.toString().toLowerCase());
+		public Identifier getStoneId() {
+			if (type == STONE) return Identifier.withDefaultNamespace("cobblestone");
+			return Identifier.withDefaultNamespace(type.toString().toLowerCase());
 		}
 
 		public Block getStoneBlock() {

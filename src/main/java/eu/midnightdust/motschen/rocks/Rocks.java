@@ -15,7 +15,7 @@ import eu.midnightdust.motschen.rocks.util.RockType;
 import eu.midnightdust.motschen.rocks.util.StickType;
 import eu.midnightdust.motschen.rocks.world.FeatureRegistry;
 import eu.midnightdust.motschen.rocks.world.WorldGenHandler;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.neoforged.api.distmarker.Dist;
@@ -60,7 +60,7 @@ public class Rocks {
 		}
 	}
 
-	public static ResourceLocation modLoc(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier modLoc(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

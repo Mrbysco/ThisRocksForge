@@ -28,7 +28,7 @@ import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -46,15 +46,15 @@ public class RocksModelProvider extends ModelProvider {
 		super(output, Rocks.MOD_ID);
 	}
 
-	public static ResourceLocation getBlockId(String s) {
+	public static Identifier getBlockId(String s) {
 		return Rocks.modLoc("block/" + s);
 	}
 
-	public static ResourceLocation getItemId(String s) {
+	public static Identifier getItemId(String s) {
 		return Rocks.modLoc("item/" + s);
 	}
 
-	public static ModelTemplate getSimpleParentModel(ResourceLocation parentId, String variant) {
+	public static ModelTemplate getSimpleParentModel(Identifier parentId, String variant) {
 		return new ModelTemplate(Optional.of(parentId), Optional.of(variant), ZERO_TEXTURE_KEY);
 	}
 
@@ -99,10 +99,10 @@ public class RocksModelProvider extends ModelProvider {
 		return blocks.stream();
 	}
 
-	public static void registerParentedItemModel(ItemModelGenerators modelGenerator, Item item, ResourceLocation parentId, Block textureSource) {
+	public static void registerParentedItemModel(ItemModelGenerators modelGenerator, Item item, Identifier parentId, Block textureSource) {
 		TextureMapping textureMap = TextureMapping.singleSlot(ZERO_TEXTURE_KEY, TextureMapping.getBlockTexture(textureSource));
 
-		ResourceLocation itemModel = getSimpleParentModel(parentId, "").create(item, textureMap, modelGenerator.modelOutput);
+		Identifier itemModel = getSimpleParentModel(parentId, "").create(item, textureMap, modelGenerator.modelOutput);
 		modelGenerator.itemModelOutput.accept(item, ItemModelUtils.plainModel(itemModel));
 	}
 	public final void registerStarfishItemVariations(ItemModelGenerators modelGenerator, Block starfish) {
@@ -113,7 +113,7 @@ public class RocksModelProvider extends ModelProvider {
 		modelGenerator.itemModelOutput.accept(starfish.asItem(), ItemModelUtils.selectBlockItemProperty(Rocks.STARFISH_VARIATION, ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(starfish.asItem())), variantMap));
 	}
 
-	public static MultiVariant getRandomRotationWeightedVariant(ResourceLocation modelId) {
+	public static MultiVariant getRandomRotationWeightedVariant(Identifier modelId) {
 		WeightedList.Builder<Variant> list = WeightedList.builder();
 		for (Quadrant rotation : Quadrant.values()) {
 			Variant rotatedVariant = new Variant(modelId, Variant.SimpleModelState.DEFAULT.withY(rotation));
@@ -126,14 +126,14 @@ public class RocksModelProvider extends ModelProvider {
 		public static void registerBlockModel(BlockModelGenerators modelGenerator, Block rockBlock, Block textureSource) {
 			TextureMapping textureMap = TextureMapping.singleSlot(ZERO_TEXTURE_KEY, TextureMapping.getBlockTexture(textureSource));
 
-			ResourceLocation largeRock = getSimpleParentModel(getBlockId("large_rock"), "_large").create(rockBlock, textureMap, modelGenerator.modelOutput);
-			ResourceLocation mediumRock = getSimpleParentModel(getBlockId("medium_rock"), "_medium").create(rockBlock, textureMap, modelGenerator.modelOutput);
-			ResourceLocation smallRock = getSimpleParentModel(getBlockId("small_rock"), "_small").create(rockBlock, textureMap, modelGenerator.modelOutput);
-			ResourceLocation tinyRock = getSimpleParentModel(getBlockId("tiny_rock"), "_tiny").create(rockBlock, textureMap, modelGenerator.modelOutput);
-			modelGenerator.blockStateOutput.accept(createBlockState(rockBlock, new ResourceLocation[]{largeRock, mediumRock, smallRock, tinyRock}));
+			Identifier largeRock = getSimpleParentModel(getBlockId("large_rock"), "_large").create(rockBlock, textureMap, modelGenerator.modelOutput);
+			Identifier mediumRock = getSimpleParentModel(getBlockId("medium_rock"), "_medium").create(rockBlock, textureMap, modelGenerator.modelOutput);
+			Identifier smallRock = getSimpleParentModel(getBlockId("small_rock"), "_small").create(rockBlock, textureMap, modelGenerator.modelOutput);
+			Identifier tinyRock = getSimpleParentModel(getBlockId("tiny_rock"), "_tiny").create(rockBlock, textureMap, modelGenerator.modelOutput);
+			modelGenerator.blockStateOutput.accept(createBlockState(rockBlock, new Identifier[]{largeRock, mediumRock, smallRock, tinyRock}));
 		}
 
-		private static BlockModelDefinitionGenerator createBlockState(Block rockBlock, ResourceLocation[] modelIds) {
+		private static BlockModelDefinitionGenerator createBlockState(Block rockBlock, Identifier[] modelIds) {
 			return MultiVariantGenerator.dispatch(rockBlock)
 					.with(PropertyDispatch.initial(Rocks.ROCK_VARIATION)
 							.generate(variation -> getRandomRotationWeightedVariant(modelIds[3 - variation.ordinal()]))
@@ -144,13 +144,13 @@ public class RocksModelProvider extends ModelProvider {
 		public static void registerBlockModel(BlockModelGenerators modelGenerator, Block stickBlock, Block textureSource) {
 			TextureMapping textureMap = TextureMapping.singleSlot(ZERO_TEXTURE_KEY, TextureMapping.getBlockTexture(textureSource));
 
-			ResourceLocation largeRock = getSimpleParentModel(getBlockId("large_stick"), "_large").create(stickBlock, textureMap, modelGenerator.modelOutput);
-			ResourceLocation mediumRock = getSimpleParentModel(getBlockId("medium_stick"), "_medium").create(stickBlock, textureMap, modelGenerator.modelOutput);
-			ResourceLocation smallRock = getSimpleParentModel(getBlockId("small_stick"), "_small").create(stickBlock, textureMap, modelGenerator.modelOutput);
-			modelGenerator.blockStateOutput.accept(createBlockState(stickBlock, new ResourceLocation[]{largeRock, mediumRock, smallRock}));
+			Identifier largeRock = getSimpleParentModel(getBlockId("large_stick"), "_large").create(stickBlock, textureMap, modelGenerator.modelOutput);
+			Identifier mediumRock = getSimpleParentModel(getBlockId("medium_stick"), "_medium").create(stickBlock, textureMap, modelGenerator.modelOutput);
+			Identifier smallRock = getSimpleParentModel(getBlockId("small_stick"), "_small").create(stickBlock, textureMap, modelGenerator.modelOutput);
+			modelGenerator.blockStateOutput.accept(createBlockState(stickBlock, new Identifier[]{largeRock, mediumRock, smallRock}));
 		}
 
-		private static BlockModelDefinitionGenerator createBlockState(Block stickBlock, ResourceLocation[] modelIds) {
+		private static BlockModelDefinitionGenerator createBlockState(Block stickBlock, Identifier[] modelIds) {
 			return MultiVariantGenerator.dispatch(stickBlock)
 					.with(PropertyDispatch.initial(Rocks.STICK_VARIATION)
 							.generate(variation -> getRandomRotationWeightedVariant(modelIds[2 - variation.ordinal()]))

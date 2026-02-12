@@ -5,7 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biomes;
 
@@ -17,11 +17,11 @@ public class RocksTagProvider {
             super(packOutput, lookupProvider, Rocks.MOD_ID);
         }
 
-        public static final TagKey<net.minecraft.world.level.biome.Biome> IS_MANGROVE_SWAMP = create(ResourceLocation.fromNamespaceAndPath("c", "is_mangrove_swamp"));
-        public static final TagKey<net.minecraft.world.level.biome.Biome> IS_CHERRY_GROVE = create(ResourceLocation.fromNamespaceAndPath("c", "is_cherry_grove"));
-        public static final TagKey<net.minecraft.world.level.biome.Biome> IS_PALE_GARDEN = create(ResourceLocation.fromNamespaceAndPath("c", "is_pale_garden"));
+        public static final TagKey<net.minecraft.world.level.biome.Biome> IS_MANGROVE_SWAMP = create(Identifier.fromNamespaceAndPath("c", "is_mangrove_swamp"));
+        public static final TagKey<net.minecraft.world.level.biome.Biome> IS_CHERRY_GROVE = create(Identifier.fromNamespaceAndPath("c", "is_cherry_grove"));
+        public static final TagKey<net.minecraft.world.level.biome.Biome> IS_PALE_GARDEN = create(Identifier.fromNamespaceAndPath("c", "is_pale_garden"));
 
-        private static TagKey<net.minecraft.world.level.biome.Biome> create(ResourceLocation location) {
+        private static TagKey<net.minecraft.world.level.biome.Biome> create(Identifier location) {
             return TagKey.create(Registries.BIOME, location);
         }
 

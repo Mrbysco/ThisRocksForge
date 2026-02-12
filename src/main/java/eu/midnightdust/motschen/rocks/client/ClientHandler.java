@@ -12,13 +12,13 @@ public class ClientHandler {
 	public static void onClientSetup(final FMLClientSetupEvent event) {
 //		event.enqueueWork(() -> { TODO: TEST
 //			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
-//					ResourceLocation.withDefaultNamespace("red"), (stack, world, entity, seed) ->
+//					Identifier.withDefaultNamespace("red"), (stack, world, entity, seed) ->
 //							matchesVariation(stack, StarfishVariation.RED));
 //			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
-//					ResourceLocation.withDefaultNamespace("pink"), (stack, world, entity, seed) ->
+//					Identifier.withDefaultNamespace("pink"), (stack, world, entity, seed) ->
 //							matchesVariation(stack, StarfishVariation.PINK));
 //			ItemProperties.register(RocksRegistry.STARFISH_ITEM.get(),
-//					ResourceLocation.withDefaultNamespace("orange"), (stack, world, entity, seed) ->
+//					Identifier.withDefaultNamespace("orange"), (stack, world, entity, seed) ->
 //							matchesVariation(stack, StarfishVariation.ORANGE));
 //		});
 	}

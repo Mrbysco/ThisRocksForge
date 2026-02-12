@@ -25,5 +25,3 @@ type="REQUIRED"
 versionRange="[21.11.0-beta,)"
 ordering="NONE"
 side="BOTH"
-[[mixins]]
-config = "rocks.mixins.json"

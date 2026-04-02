@@ -16,12 +16,12 @@ Adds little rocks, sticks, pinecones, seashells and starfish to your world to ma
 [[dependencies.rocks]]
 modId="minecraft"
 type="REQUIRED"
-versionRange="[1.21.11,1.22)"
+versionRange="[26.1.1,)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.rocks]]
 modId="neoforge"
 type="REQUIRED"
-versionRange="[21.11.0-beta,)"
+versionRange="[26.1.1.0-alpha,)"
 ordering="NONE"
 side="BOTH"

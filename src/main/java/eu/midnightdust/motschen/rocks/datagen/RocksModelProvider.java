@@ -23,7 +23,7 @@ import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.dispatch.Variant;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

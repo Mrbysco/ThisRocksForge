@@ -44,7 +44,7 @@ public class Stick extends Block implements SimpleWaterloggedBlock {
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
 		return Objects.requireNonNull(super.getStateForPlacement(context))
-				.setValue(STICK_VARIATION, StickVariation.values()[context.getLevel().random.nextIntBetweenInclusive(0, 2)])
+				.setValue(STICK_VARIATION, StickVariation.values()[context.getLevel().getRandom().nextIntBetweenInclusive(0, 2)])
 				.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 	}
 

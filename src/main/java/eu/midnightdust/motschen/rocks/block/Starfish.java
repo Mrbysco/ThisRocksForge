@@ -53,7 +53,7 @@ public class Starfish extends Block implements SimpleWaterloggedBlock {
 	public BlockState getStateForPlacement(BlockPlaceContext itemPlacementContext) {
 		FluidState fluidState = itemPlacementContext.getLevel().getFluidState(itemPlacementContext.getClickedPos());
 		return Objects.requireNonNull(super.getStateForPlacement(itemPlacementContext))
-				.setValue(STARFISH_VARIATION, StarfishVariation.values()[itemPlacementContext.getLevel().random.nextIntBetweenInclusive(0, 2)])
+				.setValue(STARFISH_VARIATION, StarfishVariation.values()[itemPlacementContext.getLevel().getRandom().nextIntBetweenInclusive(0, 2)])
 				.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 	}
 

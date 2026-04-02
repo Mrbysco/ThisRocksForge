@@ -35,7 +35,7 @@ public class SnowFeature extends Feature<ProbabilityFeatureConfiguration> {
 
 		if (structureWorldAccess.getBlockState(blockPos2).is(Blocks.SNOW) && chance == 1) {
 
-			BlockState blockState = weightedBlockStateProvider1.getState(random, blockPos);
+			BlockState blockState = weightedBlockStateProvider1.getState(context.level(), random, blockPos);
 
 			if (blockState.canSurvive(structureWorldAccess, blockPos2)) {
 				structureWorldAccess.setBlock(blockPos2, blockState, 1);
